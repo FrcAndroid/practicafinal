@@ -1,31 +1,22 @@
 $(document).ready(function() {//entra aqui cuando la página ha cargado con exito
     
     // getdetails será nuestra función para enviar la solicitud ajax    
-    var getdetails = function() {        
-        var variables = $.getJSON("peticion_de_acceso.php", {
-            
-            "nombre": $("#nombre").val(),//selector jquery, equivalente a document.getElementById('nombre').value
-            "cif": $("#cif").val(),
-            "razonsocial" : $("#razonsocial").val(),
-            "telefono": $("#tlf").val(),
-            "correo": $("#email").val(),
-            "nick": $("#nick").val(),
-            "contraseña": $("#pass").val()
-
-            
-        });
-        console.log(variables);
-        console.log($("#nombre").val());
-        return variables;
-
+    let getdetails = function () {
+        let variables = $.ajax({
+            url: "peticion_de_acceso.php",
+            dataType: "json",
+            type: "post",
+            data: $("#alta").serialize()
+        })
     }
-    
+
+    ;
+
     // Al hacer click sobre cualquier elemento que tenga el atributo data-user.....
-    $('[data-user]').click(function() {
+    $('[data-user]').click(function(e) {
 
         $("#textFail").remove();//eliminamos el elemento de fallo por si ahora sale bien
-        
-        
+        e.preventDefault();
         // this hace referencia al elemento que ha lanzado el evento click
         // con el método .data('user') obtenemos el valor del atributo data-user de dicho elemento y lo pasamos a la función getdetails definida anteriormente
         getdetails()
