@@ -3,14 +3,20 @@
 include 'base_datos.php';
 //en teoria nos hemos conectado con el usuario LIMITADO
 //comprobamos la validez de los datos introducidos
-if(isset($_POST['alta'])){
+//if(isset($_POST['alta'])){
+    $json=[];
     $errores = validarDatos();
-    var_dump($errores);
+    if(empty($errores)) $json["success"]=true;
+    else {
+        $json["success"]=false;
+        $json["errores"]=$errores;
+    }
+
     ob_end_clean();
     header("Content-Type: application/json");
-   // echo json_encode($errores);
-    die();
-}
+    echo json_encode($json);
+   // die();
+//}
 
 
 function validarDatos(){//listo para pasar a MVC
@@ -153,45 +159,13 @@ function validarDatos(){//listo para pasar a MVC
     if(isset($_POST['pass']) && !empty($_POST['pass'])) {
     }
     else{
-        $errores['nick'] = "La contraseña no puede estar vacía";
+        $errores['pass'] = "La contraseña no puede estar vacía";
         $valido = false;
     }
+
 
     return $errores;
 }
 
 
 ?>
-
-<!DOCTYPE html>
-<head>
-    <meta charset="utf-8">
-    <script src="jquery.js"></script>
-    <script src="script.js"></script>
-    <link rel='stylesheet' type='text/css' href='trabajodaw.css'>
-    <link rel='stylesheet' type='text/css' href='bootstrap.css'>
-</head>
-<body>
-<h1>Formulario de solicitud de alta</h1>
-<form id='form' method='post' action=<?=$_SERVER['PHP_SELF']?>>
-    <label class="required col-md-2 offset-md-3 col-form-label" for='nombre'>Nombre </label>
-    <input type='text' name='nombre' id='nombre'>
-    <br><br>
-    <label class="required col-md-2 offset-md-3  col-form-label " for='cif'>CIF </label>
-    <input type='text' name='cif' id='cif'><br><br>
-    <label class="required col-md-2  offset-md-3 col-form-label" for='razonsocial'>Razon Social </label>
-    <input type='text' name='razonsocial' id='razonsocial'><br><br>
-    <label class="required col-md-2  offset-md-3 col-form-label" for='tlf'>Teléfono </label>
-    <input type='tel' name='tlf' id='tlf'><br><br>
-    <label class="required col-md-2  offset-md-3 col-form-label" for='email'>Correo electrónico </label>
-    <input type='email' name='email' id='email'><br><br>
-    <label class="required col-md-2  offset-md-3 col-form-label" for='nick'>Nick (debe ser único) </label>
-    <input type='text' name='nick' id='nick'><br><br>
-    <label class="required col-md-2  offset-md-3 col-form-label" for='pass'>Contraseña </label>
-    <input type='pass' name='pass' id='pass'><br><br>
-    <input type='submit' id='alta' name="alta" data-user="alta" class='btn btn-default btn-info' value="Solicitar alta">
-    <input type='hidden' name='usuario' id='usuario' value='LIMITADO'>
-</form>
-</body>
-<!-- esto se comunica primero con ajax -->
-

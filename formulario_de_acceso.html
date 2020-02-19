@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="jquery.js"></script>
+    <script src="script.js"></script>
+    <link rel='stylesheet' type='text/css' href='trabajodaw.css'>
+    <link rel='stylesheet' type='text/css' href='bootstrap.css'>
+</head>
+<body>
+<h1>Formulario de solicitud de alta</h1>
+<form id='form' method='post'>
+    <label class="required col-md-2 offset-md-3 col-form-label" for='nombre'>Nombre </label>
+    <input type='text' name='nombre' id='nombre'>
+    <br><br>
+    <label class="required col-md-2 offset-md-3  col-form-label " for='cif'>CIF </label>
+    <input type='text' name='cif' id='cif'><br><br>
+    <label class="required col-md-2  offset-md-3 col-form-label" for='razonsocial'>Razon Social </label>
+    <input type='text' name='razonsocial' id='razonsocial'><br><br>
+    <label class="required col-md-2  offset-md-3 col-form-label" for='tlf'>Teléfono </label>
+    <input type='tel' name='tlf' id='tlf'><br><br>
+    <label class="required col-md-2  offset-md-3 col-form-label" for='email'>Correo electrónico </label>
+    <input type='email' name='email' id='email'><br><br>
+    <label class="required col-md-2  offset-md-3 col-form-label" for='nick'>Nick (debe ser único) </label>
+    <input type='text' name='nick' id='nick'><br><br>
+    <label class="required col-md-2  offset-md-3 col-form-label" for='pass'>Contraseña </label>
+    <input type='pass' name='pass' id='pass'><br><br>
+    <div class="text-center">
+        <input type='submit' id='alta' name="alta" data-user="alta" class='btn btn-default btn-info' value="Solicitar alta">
+    </div>
+    <input type='hidden' name='usuario' id='usuario' value='LIMITADO'>
+</form>
+</body>
+<!-- esto se comunica primero con ajax -->
