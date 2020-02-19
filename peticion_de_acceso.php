@@ -4,8 +4,7 @@ include 'base_datos.php';
 //en teoria nos hemos conectado con el usuario LIMITADO
 //comprobamos la validez de los datos introducidos
 //if(isset($_POST['alta'])){
-    $json=[];
-    $errores = validarDatos();
+$json=[];
     if(empty($errores)) $json["success"]=true;
     else {
         $json["success"]=false;
@@ -18,11 +17,8 @@ include 'base_datos.php';
    // die();
 //}
 
-
-function validarDatos(){//listo para pasar a MVC
-    $valido = true; // variable de control para saber si seguimos a introducir la solicitud o llamamos a ajax para mostrar errores
-    $errores = [];
-//CIF
+function cifValido(cif){
+    $valido = true;
     if(isset($_POST['cif']) && !empty($_POST['cif'])){
         $CIF = strtoupper($_POST['cif']);
         if(strlen($CIF) == 9){
@@ -71,6 +67,13 @@ function validarDatos(){//listo para pasar a MVC
         $errores['cif'] = "El CIF no puede estar vacío";
         $valido = false;
     }
+
+}
+
+function validarDatos(){//listo para pasar a MVC
+    $valido = true; // variable de control para saber si seguimos a introducir la solicitud o llamamos a ajax para mostrar errores
+    $errores = [];
+//CIF
 
     if(isset($_POST['nombre']) && !empty($_POST['nombre'])){
         //comprobamos que nombre no contenga números y sea un nombre válido

@@ -1,5 +1,6 @@
 $(document).ready(function() {//entra aqui cuando la página ha cargado con exito
     // getdetails será nuestra función para enviar la solicitud ajax
+    let permitido = true;
     let getdetails = function (values) {
         let peticion = $.ajax({
             url: "peticion_de_acceso.php",
@@ -9,8 +10,30 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
         })
         return peticion;
     };
+    //funcion de comprobacion de campos
 
-    // Al hacer click sobre cualquier elemento que tenga el atributo data-user.....
+    $("form#form :input").blur(function(){
+    //cada vez que un campo pierda focus, se llama a ajax y se pasa el atributo de this ($(this).val())
+        getdetails(this.val())
+            .done(function(response) {
+
+            })
+
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                    $("<div/>",{
+                        "id": "textFail",
+                        "class" : "text-danger",
+                        // .. you can go on and add properties
+                        "html" : "Algo ha fallado: " + textStatus,
+                    }).appendTo("body");
+
+             });
+
+
+
+    });
+
+    //funcion de insercion de datos
     $('#alta').click(function(e) {
         console.log($('form'));
         let values = $('#form').serialize();
