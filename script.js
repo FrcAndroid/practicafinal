@@ -14,7 +14,7 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
 
     $("form#form :input").blur(function(){
         console.log($(this).serialize());
-        valor = this; //guardamos para usarlo luego ya que this se cambia despues de la llamada
+        valor = this; //guardamos para usarlo lkmuego ya que this se cambia despues de la llamada
 
     //cada vez que un campo pierda focus, se llama a ajax y se pasa el atributo de this ($(this).val())
         getdetails($(this).serialize())
