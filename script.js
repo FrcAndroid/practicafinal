@@ -13,9 +13,39 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
     //funcion de comprobacion de campos
 
     $("form#form :input").blur(function(){
+        console.log($(this).serialize());
+        valor = this; //guardamos para usarlo luego ya que this se cambia despues de la llamada
+
     //cada vez que un campo pierda focus, se llama a ajax y se pasa el atributo de this ($(this).val())
-        getdetails(this.val())
+        getdetails($(this).serialize())
             .done(function(response) {
+                //primero eliminamos el mensaje de fallo anterior
+
+                //response es lo que recibimos por json
+                //recibimos un array con un valor bool y un array de errores
+                //si hemos pasado nombre, tendremos success: true si es válido, false si tiene errores y
+                //el array asociativo contendra nombre como key
+                console.log(response);
+                if(response.success === true){//mostramos valid
+                    console.log(this);
+                    $("#"+valor.id).addClass('form-control is-valid col-md-2  offset-md-3');
+                    $("<div class='valid-feedback'>Campo válido</div>").insertAfter("#"+this.id);
+                }
+
+                else{//mostramos invalid
+                    console.log('klk');
+                    errores = response.errores;
+
+                    $.each(errores, function(key, value) {//solo hay una key
+                        if(typeof errores[key] !== undefined){
+                            console.log(key);
+
+                            $("#"+key).addClass('form-control is-invalid col-md-2  offset-md-3');
+                            $("<div class='invalid-feedback'>"+value+"</div>").insertAfter("#"+key);
+                        }
+                    });
+                }
+
 
             })
 
@@ -52,7 +82,6 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
             //los errores estan en response.errores
             //done() es ejecutada cuándo se recibe la respuesta del servidor. response es el objeto JSON recibido
 
-    
             if (response.success === false) {
                 //esto es si la llamada se ha hecho correctamente
                 
@@ -64,31 +93,11 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
                         //cont = "<div>"+value+"</div>";
                         //$(cont).addClass("col-md-2 offset-md-3");
                         $("#"+key).addClass('form-control is-invalid col-md-2  offset-md-3');
-                        $("<div class='text-danger small offset-md-5 errores'>"+value+"</div>").insertAfter("#"+key);
+                        $("<div class='invalid-feedback'>"+value+"</div>").insertAfter("#"+key);
                     }
                 });
-                /*var output = "<h1>" + response.data.message + "</h1>";
-                
-                // recorremos cada usuario
-                $.each(response.data.users, function(key, value) {
-                    
-                    output += "<h2>Detalles del usuario " + val()['ID'] + "</h2>";
-                    
-                    // recorremos los valores de cada usuario
-                    $.each(val(), function(userkey, uservalue) {
-                        
-                        output += '<ul>';
-                        output += '<li>' + userkey + ': ' + userval() + "</li>";
-                        output += '</ul>';
-                        
-                    });
-                    
-                });
-                
-                // Actualizamos el HTML del elemento con id="#response-container"
-                $("#response-container").html(output);*/
-                
-            } 
+
+            }
             else {
             console.log('entra pero falla');
             $("#response-container").html('No ha habido suerte: ' + response.data.message);

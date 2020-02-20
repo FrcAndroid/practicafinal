@@ -3,23 +3,33 @@
 include 'base_datos.php';
 //en teoria nos hemos conectado con el usuario LIMITADO
 //comprobamos la validez de los datos introducidos
-//if(isset($_POST['alta'])){
+
 $json=[];
-    if(empty($errores)) $json["success"]=true;
-    else {
-        $json["success"]=false;
-        $json["errores"]=$errores;
-    }
 
-    ob_end_clean();
-    header("Content-Type: application/json");
-    echo json_encode($json);
-   // die();
-//}
+//comprobamos cual es el valor que ha pasado la llamada ajax
+if(isset($_POST['cif'])){$errores=cifValido();}
+if(isset($_POST['nombre'])){$errores=nombreValido();}
+if(isset($_POST['razonsocial'])){$errores=razonsocialValido();}
+if(isset($_POST['tlf'])){$errores=tlfValido();}
+if(isset($_POST['email'])){$errores=emailValido();}
+if(isset($_POST['nick'])){$errores=nickValido();}
+if(isset($_POST['pass'])){$errores=passValido();}
+//!!!!ERRORES NO ESTA PILLANDO EL VALOR DEL POST!!!!
+var_dump($errores);
+if(empty($errores)) $json["success"]=true;
+else {
+    $json["success"]=false;
+    $json["errores"]=$errores;
+}
 
-function cifValido(cif){
+ob_end_clean();
+header("Content-Type: application/json");
+echo json_encode($json);
+
+
+function cifValido(){
     $valido = true;
-    if(isset($_POST['cif']) && !empty($_POST['cif'])){
+    if(!empty($_POST['cif'])){
         $CIF = strtoupper($_POST['cif']);
         if(strlen($CIF) == 9){
             $arrayOrganizacion = ['A','B','C','D','E','F','G','H','K','L','M','N','P','Q','S'];
@@ -67,14 +77,10 @@ function cifValido(cif){
         $errores['cif'] = "El CIF no puede estar vacío";
         $valido = false;
     }
-
+    return $errores;
 }
 
-function validarDatos(){//listo para pasar a MVC
-    $valido = true; // variable de control para saber si seguimos a introducir la solicitud o llamamos a ajax para mostrar errores
-    $errores = [];
-//CIF
-
+function nombreValido(){
     if(isset($_POST['nombre']) && !empty($_POST['nombre'])){
         //comprobamos que nombre no contenga números y sea un nombre válido
         $nombre = $_POST['nombre'];
@@ -87,13 +93,19 @@ function validarDatos(){//listo para pasar a MVC
         $errores['nombre'] = "El nombre no puede estar vacío";
         $valido = false;
     }
+    return $errores;
+}
 
+function razonsocialValido(){
     if(isset($_POST['razonsocial']) && !empty($_POST['razonsocial'])){}
     else{
         $errores['razonsocial'] = "La Razon Social no puede estar vacía";
         $valido = false;
     }
+    return $errores;
+}
 
+function tlfValido(){
     if(isset($_POST['tlf']) && !empty($_POST['tlf'])){
         //comprobamos si son solo números
         if(1 === preg_match('~[^0-9-]~', $_POST['tlf'])){//tiene letras o carácteres especiales
@@ -106,6 +118,10 @@ function validarDatos(){//listo para pasar a MVC
         $valido = false;
     }
 
+    return $errores;
+}
+
+function emailValido(){
     if(isset($_POST['email']) && !empty($_POST['email'])) {
         //el html ya ha comprobado que es un email valido
         //pero ahora vamos a sanitizar el email antes de usarlo como query en la base de datos
@@ -132,7 +148,9 @@ function validarDatos(){//listo para pasar a MVC
         $errores['email'] = "El email no puede estar vacío";
         $valido = false;
     }
+}
 
+function nickValido(){
     if(isset($_POST['nick']) && !empty($_POST['nick'])) {
         //comprobamos si el nick ya existe en la base de datos
         //saneamos el nick para asegurarnos que no tiene inyección
@@ -159,6 +177,10 @@ function validarDatos(){//listo para pasar a MVC
         $valido = false;
     }
 
+    return $errores;
+}
+
+function passValido(){
     if(isset($_POST['pass']) && !empty($_POST['pass'])) {
     }
     else{
