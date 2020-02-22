@@ -5,18 +5,18 @@ include 'base_datos.php';
 //comprobamos la validez de los datos introducidos
 
 $json=[];
-
+$json["entra"]=$_POST;
 //comprobamos cual es el valor que ha pasado la llamada ajax
 if(isset($_POST['cif'])){$errores=cifValido();}
-if(isset($_POST['nombre'])){$errores=nombreValido();}
+if(isset($_POST['nombre'])){$json["entra"]="no"; $errores=nombreValido();}
 if(isset($_POST['razonsocial'])){$errores=razonsocialValido();}
 if(isset($_POST['tlf'])){$errores=tlfValido();}
 if(isset($_POST['email'])){$errores=emailValido();}
 if(isset($_POST['nick'])){$errores=nickValido();}
 if(isset($_POST['pass'])){$errores=passValido();}
 //!!!!ERRORES NO ESTA PILLANDO EL VALOR DEL POST!!!!
-var_dump($errores);
-if(empty($errores)) $json["success"]=true;
+//var_dump($errores);
+if(empty($errores)){ $json["success"]=true;}
 else {
     $json["success"]=false;
     $json["errores"]=$errores;

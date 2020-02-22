@@ -2,22 +2,24 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
     // getdetails será nuestra función para enviar la solicitud ajax
     let permitido = true;
     let getdetails = function (values) {
+        console.log(values);
+        let parametros = {"nombre":values};
         let peticion = $.ajax({
             url: "peticion_de_acceso.php",
-            type: "post",
-            data: values,
-            contentType: "application/json; charset=utf-8"
+            method: "POST",
+            data: parametros,
+            dataType: "json"
         })
         return peticion;
     };
     //funcion de comprobacion de campos
 
     $("form#form :input").blur(function(){
-        console.log($(this).serialize());
-        valor = this; //guardamos para usarlo lkmuego ya que this se cambia despues de la llamada
+        console.log($(this).val());
+        valor = this; //guardamos para usarlo luego ya que this se cambia despues de la llamada
 
     //cada vez que un campo pierda focus, se llama a ajax y se pasa el atributo de this ($(this).val())
-        getdetails($(this).serialize())
+        getdetails($(this).val())
             .done(function(response) {
                 //primero eliminamos el mensaje de fallo anterior
 
@@ -40,7 +42,7 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
                         if(typeof errores[key] !== undefined){
                             console.log(key);
 
-                            $("#"+key).addClass('form-control is-invalid col-md-2  offset-md-3');
+                            $("#"+key).addClass('is-invalid col-md-2  offset-md-3');
                             $("<div class='invalid-feedback'>"+value+"</div>").insertAfter("#"+key);
                         }
                     });
