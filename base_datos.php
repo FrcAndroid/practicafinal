@@ -1,4 +1,4 @@
-cd<?php
+<?php
 
 if(isset($_POST['usuario'])){
   define("PASSWORD",""); 

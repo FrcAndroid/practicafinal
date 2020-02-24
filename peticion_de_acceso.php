@@ -1,105 +1,167 @@
 <?php
-//include 'portada.php'
+//include 'control_sesion.php';
 include 'base_datos.php';
 //en teoria nos hemos conectado con el usuario LIMITADO
-//comprobamos la validez de los datos introducidos
 
-$json=[];
-$json["entra"]=$_POST;
+//primero comprobamos si ya esta terminada la comprobación
+if(isset($_POST['insertar'])){
+    var_dump($_POST['valores']);
+    $form = explode("&", $_POST['valores']);//post serializado
+    //esto nos da [0] = key=value asi que hacemos otro explode por cada iteracion del form
+    $valores = []; //array asociativo con key/value
+
+    for($i=0; $i< count($form); $i++){
+        $key_value = explode("=",$form[$i]);
+        //nos da dos valores, 0 es la key, 1 el value
+        $valores[$key_value[0]] = $key_value[1];
+    }
+
+
+    $terminado = altaSolicitud($valores);//function a la que le pasamos todos los valores ya comprobados y insertamos en la BBDD
+    if($terminado == true){
+        echo json_encode("Solicitud introducida con éxito, se te contactará en breve.");
+    }
+    else{
+        echo json_encode("Ha ocurrido un problema inesperado al procesar la solicitud, disculpe las molestias.");
+    }
+}
+else{
+//comprobamos la validez de los datos introducidos
+    $json=[];
 //comprobamos cual es el valor que ha pasado la llamada ajax
-if(isset($_POST['cif'])){$errores=cifValido();}
-if(isset($_POST['nombre'])){$json["entra"]="no"; $errores=nombreValido();}
-if(isset($_POST['razonsocial'])){$errores=razonsocialValido();}
-if(isset($_POST['tlf'])){$errores=tlfValido();}
-if(isset($_POST['email'])){$errores=emailValido();}
-if(isset($_POST['nick'])){$errores=nickValido();}
-if(isset($_POST['pass'])){$errores=passValido();}
-//!!!!ERRORES NO ESTA PILLANDO EL VALOR DEL POST!!!!
+    if(isset($_POST['razonsocial'])){$errores=razonsocialValido();}
+    if(isset($_POST['cif'])){$errores=cifValido();}
+    if(isset($_POST['domiciliosocial'])){$errores=domiciliosocialValido();}
+    if(isset($_POST['ciudad'])){$errores=ciudadValido();}
+    if(isset($_POST['tlf'])){$errores=tlfValido();}
+    if(isset($_POST['email'])){$errores=emailValido();}
+    if(isset($_POST['nick'])){$errores=nickValido();}
+    if(isset($_POST['pass'])){$errores=passValido();}
 //var_dump($errores);
-if(empty($errores)){ $json["success"]=true;}
-else {
-    $json["success"]=false;
-    $json["errores"]=$errores;
+    if(empty($errores)){ $json["success"]=true;}
+    else {
+        $json["success"]=false;
+        $json["errores"]=$errores;
+    }
+
+    ob_end_clean();
+    header("Content-Type: application/json");
+    echo json_encode($json);
+
 }
 
-ob_end_clean();
-header("Content-Type: application/json");
-echo json_encode($json);
+function altaSolicitud($valores){
+    //solo tenemos que sacar los valores del form
+    $razonsocial = $valores['razonsocial'];
+    $cif = $valores['cif'];
+    $domiciliosocial = $valores['domiciliosocial'];
+    $ciudad = $valores['ciudad'];
+    $telefono = $valores['tlf'];
+    $email = $valores['email'];
+    $nick = $valores['nick'];
+    $pass = $valores['pass'];
+
+    $conexion = conectar();
+    $consulta = "INSERT INTO solicitudes 
+                    (CIF_DNI, RAZON_SOCIAL, DOMICILIO_SOCIAL, CIUDAD, EMAIL, TELEFONO, NICK, CONTRASEÑA)
+                    VALUES (:cif,:razonsocial,:domiciliosocial,:ciudad,:email,:tlf,:nick,:pass)
+                    ";
+    $solicitud = $conexion->prepare($consulta);
+    var_dump($nick);
+    $parametros=[
+        ":razonsocial"=>$razonsocial,
+        ":cif"=>$cif,
+        ":domiciliosocial"=>$domiciliosocial,
+        ":ciudad"=>$ciudad,
+        ":email"=>$email,
+        ":tlf"=>$telefono,
+        ":nick"=>$nick,
+        ":pass"=>$pass
+    ];
+    $solicitud->execute($parametros);
+    if($solicitud->rowCount() > 0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
+
+
+
+
 
 
 function cifValido(){
-    $valido = true;
+    /*$valido = true;
     if(!empty($_POST['cif'])){
-        $CIF = strtoupper($_POST['cif']);
-        if(strlen($CIF) == 9){
-            $arrayOrganizacion = ['A','B','C','D','E','F','G','H','K','L','M','N','P','Q','S'];
-            $org = false;
-            foreach($arrayOrganizacion as $indice => $letra){
-                if ($CIF[0] == $letra){$org=true;}
-            }
-            if($org == true){
-                //el numero de organizacion es valido
-                $codProvincia = $CIF[1] + $CIF[2];
-                if ($codProvincia > 99 || $codProvincia < 1 || is_string($codProvincia)){
-                    $valido = false;
-                }
-                else{
-                    //codigo de provincia valido
-                    $numCorrelativo = $CIF[3] + $CIF[4] + $CIF[5] + $CIF[6] + $CIF[7];
-                    if(is_int($numCorrelativo)){
-                        $numControl = $CIF[8];
-                        if($CIF[0] == 'K' || $CIF[0] == 'P' || $CIF[0] == 'Q' || $CIF[0] == 'S'){
-                            if(is_int($numControl)){$valido = false;}
-                        }
-                        else if($CIF[0] == 'A' || $CIF[0] == 'B' || $CIF[0] == 'E' || $CIF[0] == 'H'){
-                            if(is_string($numControl)){$valido = false;}
-                        }
-                    }
-                    else{
-                        $valido = false;
-                    }
-                }
+        $cif = strtoupper($_POST['cif']);
+        for ($i = 0; $i < 9; $i ++)
+        {
+            $num[$i] = substr($cif, $i, 1);
+        }
+        //si no tiene un formato valido devuelve error
+
+        //esta fallando en los preg matches
+        if (!preg_match("‘((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)’", $cif)){
+            $valido = false;
+            $errores['cif'] = "Primera";
+        }
+
+        //algoritmo para comprobacion de codigos tipo CIF
+        $suma = $num[2] + $num[4] + $num[6];
+        for ($i = 1; $i < 8; $i += 2) {
+            $suma += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]), 1, 1);
+        }
+        $n = 10 - substr($suma, strlen($suma) - 1, 1);
+
+         //comprobacion de CIFs
+        if (preg_match("‘^[ABCDEFGHJNPQRSUVW]{1}’", $cif)){
+            if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1)){
+                $valido = true;
+
             }
             else{
                 $valido = false;
-            }
+                $errores['cif'] = "Segunda";
 
-        }
-        else{
-            $valido = false;
+            }
         }
 
         if($valido == false){
-            $errores['cif'] = "CIF no es válido.";
+            $errores['cif'] = "CIF no válido";
         }
     }
     else{
         $errores['cif'] = "El CIF no puede estar vacío";
-        $valido = false;
-    }
-    return $errores;
+    }*/
+    //hasta que no se arregle, no comprobamos cif
+
+    return null;
 }
 
-function nombreValido(){
-    if(isset($_POST['nombre']) && !empty($_POST['nombre'])){
+function razonsocialValido(){
+    if(isset($_POST['razonsocial']) && !empty($_POST['razonsocial'])){
         //comprobamos que nombre no contenga números y sea un nombre válido
-        $nombre = $_POST['nombre'];
-        if(1 === preg_match('~[^a-zA-Z]~', $nombre)){//tiene numeros o carácteres especiales
-            $errores['nombre'] = "El nombre no puede contener caracteres no válidos";
+        $razonsocial = $_POST['razonsocial'];
+        if(1 === preg_match('~[^a-zA-Z]~', $razonsocial)){//tiene numeros o carácteres especiales
+            $errores['razonsocial'] = "La razon social no puede contener caracteres no válidos";
             $valido = false;
         }
     }
     else{
-        $errores['nombre'] = "El nombre no puede estar vacío";
+        $errores['razonsocial'] = "La razon social no puede estar vacía";
         $valido = false;
     }
     return $errores;
 }
 
-function razonsocialValido(){
-    if(isset($_POST['razonsocial']) && !empty($_POST['razonsocial'])){}
+function domiciliosocialValido(){
+    if(isset($_POST['domiciliosocial']) && !empty($_POST['domiciliosocial'])){}
     else{
-        $errores['razonsocial'] = "La Razon Social no puede estar vacía";
+        $errores['domiciliosocial'] = "El Domicilio Social no puede estar vacía";
         $valido = false;
     }
     return $errores;
@@ -131,23 +193,31 @@ function emailValido(){
             $errores['email'] = "Hay carácteres no válidos en tu email";
         }
         else{//comprobamos que el email existe o no en la base de datos, tanto en solicitudes como en clientes
-            $conexion = conectar();
-            $consulta = "SELECT EMAIL
+            //pero primero comprobamos si es una dirección de email
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $conexion = conectar();
+                $consulta = "SELECT EMAIL
                          FROM solicitudes 
                          WHERE EMAIL = :email";
-            $resultado = $conexion->prepare($consulta);
-            $emails= $resultado->execute([":email" => $email]);
-            //si hay resultados, el email ya existe en la base de datos
-            if($emails === true){
-                $errores['email'] = "Esta dirección ya ha sido usada";
-                $valido = false;
+                $resultado = $conexion->prepare($consulta);
+                $emails= $resultado->execute([":email" => $email]);
+                //si hay resultados, el email ya existe en la base de datos
+                if($emails->rowCount > 0){
+                    $errores['email'] = "Esta dirección ya ha sido usada";
+                    $valido = false;
+                }
             }
+            else {
+                $errores['email'] = "Este email no tiene un formato válido";
+            }
+
         }
     }
     else{
         $errores['email'] = "El email no puede estar vacío";
         $valido = false;
     }
+    return $errores;
 }
 
 function nickValido(){
@@ -166,7 +236,7 @@ function nickValido(){
             $resultado = $conexion->prepare($consulta);
             $nicks = $resultado->execute([":nick" => $nick]);
             //si hay resultados, el nick ya existe en la base de datos
-            if($nicks === true){
+            if($nicks->rowCount > 0){
                 $errores['nick'] = "Este nick ya esta en uso";
                 $valido = false;
             }
@@ -185,6 +255,18 @@ function passValido(){
     }
     else{
         $errores['pass'] = "La contraseña no puede estar vacía";
+        $valido = false;
+    }
+
+
+    return $errores;
+}
+
+function ciudadValido(){
+    if(isset($_POST['ciudad']) && !empty($_POST['ciudad'])) {
+    }
+    else{
+        $errores['ciudad'] = "La ciudad no puede estar vacía";
         $valido = false;
     }
 
