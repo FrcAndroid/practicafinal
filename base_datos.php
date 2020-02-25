@@ -2,7 +2,7 @@
 
 if(isset($_POST['usuario'])){
   define("PASSWORD",""); 
-  define("USUARIO",$_POST['usuario']);
+  define("USUARIO","root");
   define("BB_DD","trabajo_daw");
   
   function conectar(){

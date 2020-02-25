@@ -1,13 +1,16 @@
 <?php include 'portada.php'?>
-<?php include 'base_datos.php'?>
+<?php //include 'base_datos.php'?>
 
 <?php
+
 //comprobamos que el login es correcto
 if(isset($_POST['iniciar'])){
     $user = $_POST['nombre'];
     $pass = $_POST['pass'];
-
-    $conexion = conectar();
+    session_start();
+    $_SESSION['login'] = $user;
+    header("location:inicio_clientes.php");
+    /*$conexion = conectar();
     $consulta = "SELECT * FROM clientes WHERE NICK = :user AND CONTRASEÑA = :pass";
     $resultado = $conexion->prepare($consulta);
 
@@ -24,7 +27,7 @@ if(isset($_POST['iniciar'])){
     }
     else{
         echo "Usuario o contraseña inválidos.";
-    }
+    }*/
 }
 ?>
 <!DOCTYPE html>
