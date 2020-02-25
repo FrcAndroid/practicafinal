@@ -1,0 +1,38 @@
+.required:after {
+     content:" *";
+     color: red;
+ }
+
+#portada{
+    background-color: #9fcdff;
+}
+
+#portada > p{
+    height: 100%;
+    width:100%;
+    font-size: 100px;
+    padding: 0px 0px 100px 50px;
+}
+
+.navbar{
+    margin-top: -1em;
+    background-color: #9fcde1;
+}
+
+#user{
+    margin-bottom: 1px;
+    margin-right: 10px;
+}
+
+.derecha{
+    margin-right: 10px;
+}
+
+.dropdown-menu{
+    background-color:#9fcde1;
+    font-size: 20px;
+}
+
+.dropdown-item{
+    color: white;
+}
