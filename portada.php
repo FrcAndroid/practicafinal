@@ -9,6 +9,6 @@
 
     </head>
     <body>
-        <div id="portada" >
+        <div id="portada">
             <p>Empresa S.A</p>
         </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <script src="jquery.js"></script>
-    <script src="script.js"></script>
+    <script src="alta.js"></script>
     <link rel='stylesheet' type='text/css' href='trabajodaw.css'>
     <link rel='stylesheet' type='text/css' href='bootstrap.css'>
 </head>

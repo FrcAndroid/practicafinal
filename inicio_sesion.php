@@ -1,16 +1,18 @@
 <?php include 'portada.php'?>
-<?php //include 'base_datos.php'?>
+<?php include 'base_datos.php'?>
 
 <?php
 
 //comprobamos que el login es correcto
 if(isset($_POST['iniciar'])){
+    define ("USUARIO", "LIMITADO");
+
     $user = $_POST['nombre'];
     $pass = $_POST['pass'];
     session_start();
     $_SESSION['login'] = $user;
     header("location:inicio_clientes.php");
-    $conexion = conectar();
+    $conexion = conectar(USUARIO);
     $consulta = "SELECT * FROM clientes WHERE NICK = :user AND CONTRASEÑA = :pass";
     $resultado = $conexion->prepare($consulta);
 

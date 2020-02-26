@@ -36,3 +36,8 @@
 .dropdown-item{
     color: white;
 }
+
+.dropdown-toggle{
+    font-size: 20px;
+
+}

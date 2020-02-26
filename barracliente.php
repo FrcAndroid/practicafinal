@@ -11,11 +11,11 @@
                     Pedidos
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Ver Pedidos</a>
-                    <a class="dropdown-item" href="#">Realizar Pedidos</a>
+                    <a class="dropdown-item" href="ver_pedido.php">Ver Pedidos</a>
+                    <a class="dropdown-item" href="realizar_pedido.php">Realizar Pedidos</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Modificar Pedidos</a>
-                    <a class="dropdown-item" href="#">Borrar Pedidos</a>
+                    <a class="dropdown-item" href="modificar_pedido.php">Modificar Pedidos</a>
+                    <a class="dropdown-item" href="borrar_pedido.php">Borrar Pedidos</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -23,7 +23,7 @@
                     Albaranes
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Ver Albaranes</a>
+                    <a class="dropdown-item" href="ver_albaranes.php">Ver Albaranes</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -31,7 +31,7 @@
                     Facturas
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Ver Facturas</a>
+                    <a class="dropdown-item" href="ver_facturas.php">Ver Facturas</a>
                 </div>
             </li>
         </ul>
