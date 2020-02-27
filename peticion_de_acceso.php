@@ -61,7 +61,7 @@ function altaSolicitud($valores){
     $email = $valores['email'];
     $nick = $valores['nick'];
     $pass = $valores['pass'];
-
+    
     $conexion = conectar(USUARIO);
     $consulta = "INSERT INTO solicitudes 
                     (CIF_DNI, RAZON_SOCIAL, DOMICILIO_SOCIAL, CIUDAD, EMAIL, TELEFONO, NICK, CONTRASEÑA)

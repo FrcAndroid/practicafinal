@@ -5,7 +5,7 @@
 
 //comprobamos que el login es correcto
 if(isset($_POST['iniciar'])){
-    define ("USUARIO", "LIMITADO");
+    define ("USUARIO", "root");
 
     $user = $_POST['nombre'];
     $pass = $_POST['pass'];
