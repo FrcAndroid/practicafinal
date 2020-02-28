@@ -3,39 +3,37 @@
 
 $(document).ready(function() {//entra aqui cuando la página ha cargado con exito
     //creamos variable de carrito
-    let carrito = new Object;
+    let carrito = {};
     let i = 0;
     let precios = [];
 
+
+
     let getdetails = function (values) {
-        let parametros = {};
-        parametros = {
-            "valores" : values
-        }
-        let peticion = $.ajax({
+
+        return $.ajax({
             url: "datos_carrito.php",
             method: "POST",
-            data: parametros,
+            data: values,
             dataType: "json"
-        })
-        return peticion;
+        });
     };
     
     $("form").submit(function(e){//añadir articulos a carrito
-        console.log('a');
         e.preventDefault();
         let val = $(this); //guardamos cantidad para futuro
         let form = $(this).serialize();
-        console.log(form);
-        getdetails(form)
+
+        let parametros = {
+            "valores" : form
+        }
+
+        getdetails(parametros)
         
         .done(function(response) {//entra aqui cuando sale bien la llamada
-            console.log(response);
-            console.log(response.COD_ARTICULO);
             //ahora metemos cosas en el carrito
             //primero miramos si el carrito tiene elementos, y si no, lo creamos
             if(Object.keys(carrito).length > 0){
-                console.log('tiene cosas');
                 //añadimos objetos extra
                 if(val[0][1].value > 0){
 
@@ -48,17 +46,19 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
                     let articulo = document.createElement('div');
                     articulo.id = i;
                     articulo.innerText = response.NOMBRE + " (" + val[0][1].value + ")   " + (val[0][1].value * response.PRECIO) + "€";
+                    $(articulo).addClass("articulo");
                     articulo.appendChild(borrar);
 
-                    articulos = document.getElementById("articulos");
+                    let articulos = document.getElementById("articulos");
 
                     articulos.appendChild(articulo);
                     carrito[i] = response;
                     precios[i] = val[0][1].value * response.PRECIO;
-                    let precio = 0;
+                    var precio = 0;
                     for(let j=0; j<precios.length; j++){
                         precio+= precios[j];
                     }
+                    total.value = precio;
                     total.innerText = "Total: " + precio + "€";
                     i++;           
 
@@ -71,7 +71,7 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
                 let caja = document.createElement('div');
                 caja.id = "carrito";
                 caja.innerText = "Carrito";
-                caja.style.cssText= "text-align: left; font-size: 20px; position: fixed; right: 0; bottom: 0; width: 30%; background-color: blue; color: white";
+                caja.style.cssText= "text-align: left; font-size: 20px; position: fixed; right: 0; bottom: 0; width: 30%; background-color: #9fcdff; color: white";
                 
                 let caja2 = document.createElement('div');
                 caja2.id = "articulos";
@@ -104,13 +104,14 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
 
                 //añadimos los datos del nuevo objeto al carrito
                 //sacamos la cantidad del form
-                console.log(val);
                 let articulo = document.createElement('div');
                 articulo.id = i;
                 articulo.innerText = response.NOMBRE + " (" + val[0][1].value + ")   " + (val[0][1].value * response.PRECIO) + "€";
+                $(articulo).addClass("articulo");
                 articulo.appendChild(borrar1);
 
                 caja2.appendChild(articulo);
+                total.value = val[0][1].value * response.PRECIO;
                 total.innerText +=" "+ (val[0][1].value * response.PRECIO) + "€";
                 carrito[i] = response;
                 precios[i] = val[0][1].value * response.PRECIO;
@@ -129,21 +130,84 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
             }).appendTo("body");
 
         });
-        
-
-
-
-
-
-
 
     });
 
+    $(document).on('click', '.borrar', function(){
+        let valor = this.id;
+        let dinero = $("#total").val() - precios[valor];
+        $("#total").val(dinero);
+
+        precios[valor] = 0;
+        delete carrito[valor];
+        total.innerText = "Total: " + dinero + "€";
+        $(".articulo[id=" + valor + "]").remove();
+        i--;
+
+        if(Object.keys(carrito).length == 0){
+            //destruimos el carrito
+            $("#carrito").remove();
+            precios = [];
+            carrito = {};
+        }
+    });
+
+    $(document).on('click', '#generar', function () {//generacion definitiva del pedido a partir del carrito
+        //primero vemos si hay un pedido que generar para empezar
+        let carritoGenerado = $("#carrito");
 
 
 
+        if(typeof carritoGenerado !== undefined && Object.entries(carrito).length > 0){//existe un carrito y tiene valores
+            //almacenaremos en PEDIDOS Y LINEA_PEDIDOS para lo que usaremos ajax para llamar a datos_carrito
+            //tenemos que llevarnos PRECIO, CANTIDAD, COD_ARTICULO de cada item
+            //Cada linea de pedido es un item del pedido y todos se unen por el COD_PEDIDO
+            //Generamos los parámetros que necesitemos y llamamos a AJAX
+            console.log(carritoGenerado);
+            console.log(carrito);
+            console.log(precios[0]);
+            console.log(carrito[0].PRECIO);
+            //precios[i] / carrito[i].PRECIO == CANTIDAD
+            //cada indice no nulo del carrito es un elemento del pedido, por lo tanto hacemos un for y vamos montandolos patametros
+            let pedido = {};//pedido completo con todas sus lineas
+            let productos = 0;
+            for(let i in carrito){
+                if(typeof carrito[i] !== undefined && typeof precios[i] !== undefined){
+                    productos = {
+                        "ARTICULO" : carrito[i].COD_ARTICULO,
+                        "PRECIO" : precios[i],
+                        "CANTIDAD" : precios[i] / carrito[i].PRECIO,
+                    }
+                    pedido[i] = productos;
+                }
+            }
+
+            let parametros = {
+                "pedido" : pedido,
+                "generar" : true
+            }
+
+            console.log(pedido);
+            getdetails(parametros)
+                .done(function(response) {//entra aqui cuando sale bien la llamada
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    $("<div/>",{
+                        "id": "textFail",
+                        "class" : "text-danger",
+                        // .. you can go on and add properties
+                        "html" : "Algo ha fallado: " + textStatus,
+                    }).appendTo("body");
+
+                });
 
 
 
+        }
+
+
+    })
 
 });
