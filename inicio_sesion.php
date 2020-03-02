@@ -21,10 +21,10 @@ if(isset($_POST['iniciar'])){
         ":pass" => $pass
     ];
     $resultado->execute($parametros);
-    if($user = $resultado->fetch(PDO::FETCH_ASSOC)){//consulta se ha realizado con exito
+    if($usuario = $resultado->fetch(PDO::FETCH_ASSOC)){//consulta se ha realizado con exito
         //hay usuario, lo metemos en sesión y redirigimos a inicio con area de clientes
         session_start();
-        $_SESSION['login'] = $user;
+        $_SESSION['login'] = $usuario;
         header("location:inicio_clientes.php");
     }
     else{

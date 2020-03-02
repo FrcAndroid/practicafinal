@@ -31,32 +31,73 @@ if(isset($_POST['valores'])){
 if(isset($_POST['generar'])){
     //recibimos el array de pedidos y lo generamos con transaccion atomica
     $pedido = $_POST['pedido'];
-    var_dump($pedido);
+    $permitido = true;
+    $cliente = $user['COD_CLIENTE'];
     //primero introducimos el pedido nuevo
     $conexion = conectar(USUARIO);
-    $consulta = "INSERT INTO pedidos (FECHA, GENERADO_POR_CLIENTE) VALUES (:fecha, :cliente)";
-    $fecha = date('d/m/Y h:i:s a');
-    $cliente = $user['COD_CLIENTE'];
-    $resultado = $conexion->prepare($consulta);
-    $parametros = [":fecha"=> $fecha, ":cliente"=> $cliente];
-    $resultado->execute($parametros);
-    if($resultado->rowCount() > 0){
-        //primero sacamos el codigo del pedido
-        $consulta = "SELECT MAX(COD_PEDIDO) FROM pedidos";//devuelve el ultimo codigo de pedido, que es el que estamos generando
+    
+    //variables necesarias
+    //num_linea (va de 0 a cuando termine el pedido)
+    //precio, cantidad, articulo
+    //cod_usuario (sesion)
+    //cod_pedido
+    // //ahora hacemos la transaccion
+    //recorremos el array pedido
+    try{
+        $conexion->beginTransaction();
+        $consulta = "INSERT INTO pedidos (FECHA, GENERADO_POR_CLIENTE, COD_CLIENTE) VALUES (:fecha, :generado, :cliente)";
+        $parametros = [":fecha"=> date("Y-m-d H:i:s"), ":generado" => "SI", ":cliente" => $cliente];
         $resultado = $conexion->prepare($consulta);
-        $resultado->execute();
-        if($resultado){
+        $resultado->execute($parametros);
+
+        if($resultado->rowCount() > 0){
+            //primero sacamos el codigo del pedido
+            $consulta = "SELECT MAX(COD_PEDIDO) as COD_PEDIDO FROM pedidos";//devuelve el ultimo codigo de pedido, que es el que estamos generando
+            $resultado = $conexion->prepare($consulta);
+            $resultado->execute();
+            if($resultado){
             $cod_pedido = $resultado->fetch(PDO::FETCH_ASSOC);
-            //variables necesarias
-            //num_linea (va de 0 a cuando termine el pedido)
-            //precio, cantidad, articulo
-            //cod_usuario (sesion)
-            //cod_pedido
-            // //ahora hacemos la transaccion
-            //recorremos el array pedido
 
-
+            for ($i=0; $i<count($pedido); $i++){//i cada linea de producto
+                $consulta = "INSERT INTO lineas_pedidos (NUM_LINEA_PEDIDO, PRECIO, CANTIDAD, COD_USUARIO_GESTION, COD_PEDIDO, COD_ARTICULO, COD_CLIENTE)
+                VALUES (:linea, :precio, :cantidad, :codusu, :codped, :codart, :cliente)";
+                $parametros = [
+                ":linea" => $i,
+                ":precio" => $pedido[$i]['PRECIO'],
+                ":cantidad" => $pedido[$i]['CANTIDAD'],
+                ":codusu" => NULL, //usuario que ha gestionado el pedido (GESTOR)
+                ":codped" => $cod_pedido['COD_PEDIDO'],
+                ":codart" => $pedido[$i]['ARTICULO'],
+                ":cliente" => $cliente
+            ];
+            $resultado = $conexion->prepare($consulta);
+            $resultado->execute($parametros);
+            }
         }
+        }
+            $conexion->commit();
 
+    }              
+        
+    
+    catch (Exception $e) {
+        $conexion->rollBack();
+        echo "Failed: " . $e->getMessage();
+        $permitido = false;
     }
+
+    if($permitido == true){
+        $json['success'] = true;
+    }
+    else{
+        $json['success'] = false;
+    }
+
+    echo json_encode($json);
+
+
 }
+    
+        
+
+    

@@ -163,10 +163,7 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
             //tenemos que llevarnos PRECIO, CANTIDAD, COD_ARTICULO de cada item
             //Cada linea de pedido es un item del pedido y todos se unen por el COD_PEDIDO
             //Generamos los parámetros que necesitemos y llamamos a AJAX
-            console.log(carritoGenerado);
-            console.log(carrito);
-            console.log(precios[0]);
-            console.log(carrito[0].PRECIO);
+            
             //precios[i] / carrito[i].PRECIO == CANTIDAD
             //cada indice no nulo del carrito es un elemento del pedido, por lo tanto hacemos un for y vamos montandolos patametros
             let pedido = {};//pedido completo con todas sus lineas
@@ -190,6 +187,13 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
             console.log(pedido);
             getdetails(parametros)
                 .done(function(response) {//entra aqui cuando sale bien la llamada
+                    if(response.success == true){
+                        alert("Pedido realizado con éxito");
+                        window.location.reload();
+                    }
+                    else{
+                        alert("Ha ocurrido un error al realizar el pedido");
+                    }
 
                 })
 

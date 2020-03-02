@@ -13,9 +13,6 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="ver_pedido.php">Ver Pedidos</a>
                     <a class="dropdown-item" href="realizar_pedido.php">Realizar Pedidos</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="modificar_pedido.php">Modificar Pedidos</a>
-                    <a class="dropdown-item" href="borrar_pedido.php">Borrar Pedidos</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
