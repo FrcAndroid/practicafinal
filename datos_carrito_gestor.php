@@ -32,8 +32,9 @@ if(isset($_POST['generar'])){
     //recibimos el array de pedidos y lo generamos con transaccion atomica
     $pedido = $_POST['pedido'];
     $permitido = true;
-    $cliente = $user;
-
+    $cliente = 0;
+    $gestor = $user['COD_USUARIO_GESTION'];
+    
     //primero introducimos el pedido nuevo
     $conexion = conectar(USUARIO);
     
@@ -47,7 +48,7 @@ if(isset($_POST['generar'])){
     try{
         $conexion->beginTransaction();
         $consulta = "INSERT INTO pedidos (COD_CLIENTE, FECHA, GENERADO_POR_CLIENTE) VALUES (:cliente, :fecha, :generado)";
-        $parametros = [":fecha"=> date("Y-m-d H:i:s"), ":generado" => "SI", ":cliente" => $cliente];
+        $parametros = [":fecha"=> date("Y-m-d H:i:s"), ":generado" => "NO", ":cliente" => $cliente];
         $resultado = $conexion->prepare($consulta);
         $resultado->execute($parametros);
 
@@ -66,10 +67,10 @@ if(isset($_POST['generar'])){
                 ":linea" => $i,
                 ":precio" => $pedido[$i]['PRECIO'],
                 ":cantidad" => $pedido[$i]['CANTIDAD'],
-                ":codusu" => NULL, //usuario que ha gestionado el pedido (GESTOR)
+                ":codusu" => $gestor, //usuario que ha gestionado el pedido (GESTOR)
                 ":codped" => $cod_pedido['COD_PEDIDO'],
                 ":codart" => $pedido[$i]['ARTICULO'],
-                ":cliente" => $cliente
+                ":cliente" => 0
             ];
             $resultado = $conexion->prepare($consulta);
             $resultado->execute($parametros);

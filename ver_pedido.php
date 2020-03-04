@@ -10,8 +10,10 @@ if(!isset($_POST['buscar'])){
     $conexion = conectar(USUARIO);
     $consulta = "SELECT * FROM pedidos WHERE COD_CLIENTE = :cliente";
     $resultado = $conexion->prepare($consulta);
-    $parametros = [":cliente" => $user['COD_CLIENTE']];
+    $parametros = [":cliente" => $user];
     $resultado->execute($parametros);
+
+
 }
 else{
     //buscamos por pedido, fecha, o ambos
@@ -35,7 +37,24 @@ else{
     $resultado = $conexion->prepare($consulta);
     $resultado->execute($parametros);
 
+
 }
+
+$parametros = [":cliente" => $user];
+//para saber si hay lineas de pedido en albaran
+$consulta1 = "SELECT p.COD_PEDIDO, p.NUM_LINEA_PEDIDO 
+FROM lineas_pedidos p join lineas_albaran a on p.COD_PEDIDO = a.COD_PEDIDO AND p.NUM_LINEA_PEDIDO = a.NUM_LINEA_PEDIDO 
+WHERE p.COD_CLIENTE = :cliente";
+$albaranes = $conexion->prepare($consulta1);
+$albaranes->execute($parametros);
+
+//para saber si hay pedido en factura
+$consulta2 = "SELECT COD_PEDIDO 
+FROM lineas_pedidos p join lineas_albaran a on p.COD_PEDIDO = a.COD_PEDIDO AND p.NUM_LINEA_PEDIDO = a.NUM_LINEA_PEDIDO
+ join lineas_facturas f on a.NUM_LINEA_ALBARAN = f.NUM_LINEA_ALBARAN AND a.COD_ALBARAN = f.COD_ALBARAN 
+ WHERE COD_CLIENTE = :cliente";
+$facturas = $conexion->prepare($consulta1);
+$facturas->execute($parametros);
 
 ?>
 <script src="moment.min.js"></script>
@@ -56,16 +75,47 @@ Pedido <input type='number' name='pedido' id='pedido'> Fecha <input type='date' 
       </th>
       <th class="th-sm">Fecha
       </th>
+        <th>
+            Estado pedido
+        </th>
       
     </tr>
   </thead>
   <tbody>
-    <?php while($pedido = $resultado->fetch(PDO::FETCH_ASSOC)){ ?>
+    <?php
+    $lineas = [];
+    $i = 0;
+    while($pedido = $resultado->fetch(PDO::FETCH_ASSOC)){ ?>
         <tr>
             <td><?=$pedido['COD_PEDIDO']?></td>
             <td><?=$pedido['FECHA']?></td>
-            <td><a class="text-center btn-outline-info btn-default" href =<?="modificar_pedido.php?pedido=" . $pedido["COD_PEDIDO"].""?>>Modificar pedido</button></td>
-            <td><a class="text-center btn-outline-danger btn-default" href =<?="borrar_pedido.php?pedido=" . $pedido["COD_PEDIDO"]. ""?>>Borrar pedido</button></td>
+            <?php
+            //aqui comprobamos si el pedido es una factura, un albaran completo, o es modificable
+            if(count($facturas->fetchAll(PDO::FETCH_ASSOC)) > 0){//pedido es factura
+                ?>
+                <td style="color: red">Factura</td>
+                <?php //no es modificable ni borrable
+            }
+            else if(count($albaranes->fetchAll(PDO::FETCH_ASSOC)) > 0){//pedido es albaran parcial o completo
+                while($albaran = $albaranes->fetch(PDO::FETCH_ASSOC)){
+                    $lineas[$i] = $albaran['NUM_LINEA_PEDIDO'];
+                    $i++;
+                }
+                $estado = "Albarán parcial o completo";
+                //nos llevamos las lineas devueltas por albaranes para saber que lineas son y no son modificables
+                ?>
+                <td style="color: deepskyblue;">Albarán parcial o completo</td>
+                <td><a class="text-center btn-outline-info btn-default" href =<?="modificar_pedido.php?pedido=" . $pedido["COD_PEDIDO"]."?lineas=". serialize($lineas)?>>Modificar pedido</a></td>
+                <td><a class="text-center btn-outline-danger btn-default" href =<?="borrar_pedido.php?pedido=" . $pedido["COD_PEDIDO"]. "?lineas=". serialize($lineas)?>>Borrar pedido</a></td>
+                <?php }
+            else{// pedido es modificable?>
+                <td style="color: green;">Modificable</td>
+                <td><a class="text-center btn-outline-info btn-default" href =<?="modificar_pedido.php?pedido=" . $pedido["COD_PEDIDO"].""?>>Modificar pedido</a></td>
+                <td><a class="text-center btn-outline-danger btn-default" href =<?="borrar_pedido.php?pedido=" . $pedido["COD_PEDIDO"]. ""?>>Borrar pedido</a></td>
+            <?php }
+
+            ?>
+
     <?php } ?>
     </tbody>
     </table>

@@ -1,41 +1,54 @@
 <?php
 include 'inicio_clientes.php';
-// include 'base_datos.php';
-
-//usamos la variable de sesion para acceder a los valores 
-if(!isset($_POST['modificar'])){//primera vez que entra
-    $valores = [];
-    foreach($user as $key=>$value){
-        if($key == "ID_SOLICITUD" || $key == "DNI" || $key == "NICK" || $key == "USUARIO"){
-            $valores[$key] = $value;
-        }
+include 'base_datos.php';
+define("USUARIO", "root");
+//usamos la variable de sesion para acceder a los valores
+$valores = [];
+foreach($_SESSION['login'] as $key=>$value){
+    if($key == "ID_SOLICITUD" || $key == "CIF_DNI" || $key == "NICK" || $key == "COD_CLIENTE"){
     }
-    //al final tenemos un array de valores modificables
+    else{
+        $valores[$key] = $value;
+    }
 }
-else{
-    //hacemos otro foreach para saber que valores tenemos que modificar
-    foreach($valores as $key=>$value){
-        if(isset($_POST[$key])){//tenemos todos los valores en sus keys y los modificamos de forma dinamica
-            $key = $_POST[$key];
-            $conexion = conectar();
-            $consulta = "UPDATE clientes SET $key = $value WHERE $key = :key";
+//al final tenemos un array de valores modificables
+if(isset($_POST['modificar'])){
+
+
+            $conexion = conectar(USUARIO);
+            $consulta = "UPDATE clientes 
+SET RAZON_SOCIAL = :razon,
+ DOMICILIO_SOCIAL = :dom,
+  CIUDAD = :ciu, EMAIL = :email, TELEFONO = :telefono, CONTRASEÑA = :pass
+  WHERE COD_CLIENTE = :cod";
             $resultado = $conexion->prepare($consulta);
-            $parametros = [":key"=> $key];
+            $parametros = [":razon" => $_POST['RAZON_SOCIAL'], ":dom"=> $_POST['DOMICILIO_SOCIAL'], ":ciu"=> $_POST['CIUDAD'], ":email" => $_POST['EMAIL'], ":telefono" => $_POST['TELEFONO'], ":pass" => $_POST['CONTRASEÑA']
+             ,":cod" => $user['COD_CLIENTE']];
             $resultado->execute($parametros);
-            if($datos = $resultado->fetch(PDO::FETCH_ASSOC)){
+            if($resultado->rowCount() > 0){
                 echo "Modificación realizada con éxito.";
+                $consulta = "SELECT * FROM clientes WHERE COD_CLIENTE = :cod"; //para actualizar la var de sesion
+                $parametros = [":cod" => $user['COD_CLIENTE']];
+                $resultado = $conexion->prepare($consulta);
+                $resultado->execute($parametros);
+                if($usuario = $resultado->fetch(PDO::FETCH_ASSOC)){//hay usuario
+                    $_SESSION['login'] = $usuario;
+                }
             }
 
-        }
-    }
-    
+
+
 }
+
 ?>
 <h1>Modifica tus datos</h1>
 <form method='post' action=<?=$_SERVER['PHP_SELF']?>>
     <?php
     foreach($valores as $key=>$value){?>
-        <label for=<?=$key?>><?=$key?></label>
-        <input type='text' id=<?=$key?> name=<?=$key?> value=<?=$value?>>
-    <?php } ?>
-    <input type='submit' name='modificar' id='modificar' value='Modificar datos'?>
+        <label class="required  offset-md-3 col-form-label" for=<?=$key?>><?=$key?></label>
+        <input class="form-control col-md-4 offset-md-3" type='text' id=<?=$key?> name=<?=$key?> value=<?=$value?>>
+    <?php } ?><br>
+    <div>
+        <input type='submit' id='modificar' name="modificar" class='btn btn-default btn-info offset-md-3' value="Modificar datos">
+    </div>
+

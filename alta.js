@@ -124,12 +124,13 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
                     //los errores estan en response.errores
                     //done() es ejecutada cuándo se recibe la respuesta del servidor. response es el objeto JSON recibido
 
-                    if (response.success === false) {
+                    $("#solicitud").remove();
+                    $("<div/>", {
+                        "id": "solicitud",
+                        "class": "text-success",
+                        "html": "Solicitud procesada con éxito.",
+                    }).appendTo("body");
 
-                    }
-                    else {
-
-                    }
 
                 })
 

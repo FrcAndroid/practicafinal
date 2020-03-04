@@ -1,16 +1,32 @@
-<?php include 'portada.php' ?>
+<?php
+include "base_datos.php";
+include "inicio_gestion.php";
+define("USUARIO", "GESTOR");
+//simplemente añadimos el cliente, no hay necesidad de ajax
+if(isset($_POST['alta'])){
+    $rSocial = $_POST['razonsocial'];
+    $CIF = $_POST['cif'];
+    $dSocial = $_POST['domiciliosocial'];
+    $ciu = $_POST['ciudad'];
+    $tlf = $_POST['tlf'];
+    $mail = $_POST['email'];
+    $nick = $_POST['nick'];
+    $pass = $_POST['pass'];
 
-<!DOCTYPE html>
-<head>
-    <meta charset="utf-8">
-    <script src="jquery.js"></script>
-    <script src="alta.js"></script>
-    <link rel='stylesheet' type='text/css' href='trabajodaw.css'>
-    <link rel='stylesheet' type='text/css' href='bootstrap.css'>
-</head>
-<body>
-<h1 class="text-center">Formulario de solicitud de alta</h1>
-<form id='form' class="">
+    $conexion = conectar(USUARIO);
+    $consulta = "INSERT INTO clientes (CIF_DNI, RAZON_SOCIAL, DOMICILIO_SOCIAL, CIUDAD, EMAIL, TELEFONO, NICK, CONTRASEÑA)
+                VALUES (:rsoc, :cif, :dsoc, :ciu, :tlf, :mail, :nick, :pass)";
+    $parametros = [":rsoc" => $rSocial, ":cif" => $CIF, ":dsoc" => $dSocial, ":ciu" => $ciu, ":tlf" => $tlf, ":mail" => $mail, ":nick" => $nick, ":pass" => $pass];
+    $resultado = $conexion->prepare($consulta);
+    $resultado->execute($parametros);
+    if($resultado->rowCount() > 0){
+        header("location:gestion_clientes.php?success=true");
+    }
+
+}
+?>
+<h1 class="text-center">Añade un cliente</h1>
+<form id='form' method="post" class="">
     <label class="required  offset-md-3 col-form-label" for='razonsocial'>Razon Social </label>
     <input type='text' name='razonsocial' id='razonsocial' class="form-control col-md-4 offset-md-3" autocomplete="on"  >
     <label class="required  offset-md-3  col-form-label " for='cif'>CIF </label>
@@ -30,7 +46,4 @@
     <div class="text-center">
         <input type='submit' id='alta' name="alta" data-user="alta" class='btn btn-default btn-info' value="Solicitar alta">
     </div>
-    <div id="solicitud"></div>
 </form>
-</body>
-<!-- esto se comunica primero con ajax -->

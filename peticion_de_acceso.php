@@ -232,7 +232,7 @@ function nickValido(){
             $valido = false;
         }
         else{//comprobamos que el nick existe o no en la base de datos, tanto en solicitudes como en clientes
-            $conexion = conectar();
+            $conexion = conectar(USUARIO);
             $consulta = "SELECT NICK FROM solicitudes WHERE NICK = :nick";
             $resultado = $conexion->prepare($consulta);
             $nicks = $resultado->execute([":nick" => $nick]);

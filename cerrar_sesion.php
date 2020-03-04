@@ -5,5 +5,5 @@ include 'control_sesion.php';
 if(isset($user)){
     $_SESSION = array();
     session_destroy();
-    header("location:inicio_sesion.php");
+    header("location:pagina_inicio.php");
 }
