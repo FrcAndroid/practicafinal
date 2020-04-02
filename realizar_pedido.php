@@ -3,7 +3,7 @@ include 'inicio_clientes.php';
 include 'base_datos.php';
 
 //primera pasada, leemos los productos desde base de datos
-define("USUARIO", "root");
+define("USUARIO", "CLIENTES");
 $u=USUARIO;
 $conexion = conectar($u);
 $consulta = "SELECT * FROM articulos";

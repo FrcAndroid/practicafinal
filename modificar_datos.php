@@ -1,7 +1,7 @@
 <?php
 include 'inicio_clientes.php';
 include 'base_datos.php';
-define("USUARIO", "root");
+define("USUARIO", "CLIENTES");
 //usamos la variable de sesion para acceder a los valores
 $valores = [];
 foreach($_SESSION['login'] as $key=>$value){

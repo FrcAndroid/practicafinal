@@ -1,7 +1,7 @@
 <?php
 include 'inicio_clientes.php';
 include "base_datos.php";
-define("USUARIO", "root");
+define("USUARIO", "CLIENTES");
 //enseñamos las lineas del pedido y permitimos que modifique las que no estan pasadas a albarán todavía
 $id_pedido = $_GET['pedido'];
 

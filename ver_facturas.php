@@ -3,7 +3,7 @@ include 'inicio_clientes.php';
 include 'base_datos.php';
 
 //mostramos en tabla las facturas, solo consulta
-define("USUARIO", "root");
+define("USUARIO", "CLIENTES");
 
 
 if(!isset($_POST['buscar'])){

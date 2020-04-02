@@ -4,7 +4,7 @@ include 'base_datos.php';
 
 //mostramos en tabla los pedidos, enseñando botones para modificar y borrar pedido que nos llevaran a
 //poder modificar las LINEAS, pero ahora solo mostramos pedidos
-define("USUARIO", "root");
+define("USUARIO", "CLIENTES");
 
 if(!isset($_POST['buscar'])){
     $conexion = conectar(USUARIO);

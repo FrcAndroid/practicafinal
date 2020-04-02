@@ -2,7 +2,7 @@
 //simplemente comprobamos que los datos son validos y los actualizamos en la base de datos, mandando un mensaje de exito
 //si sale bien
 include "base_datos.php";
-define("USUARIO", "root");
+define("USUARIO", "CLIENTES");
 
 if(isset($_POST['value'])){
     $json = [];
