@@ -1,6 +1,6 @@
 <?php
-include 'base_datos.php';
-include 'control_sesion.php';
+include '../base_datos.php';
+include '../control_sesion_gestor.php';
 define("USUARIO", "GESTOR");
 
 if(isset($_POST['alta'])){
@@ -46,24 +46,46 @@ if(isset($_POST['aceptar'])){
     $resultado = $conexion->prepare($consulta);
     $parametros = [":cod" => $cod];
     $resultado->execute($parametros);
-    if($usuario = $resultado->fetch(PDO::FETCH_ASSOC)){
+    if($user = $resultado->fetch(PDO::FETCH_ASSOC)){
         //usamos los parametros de usuario para añadir a cliente, empezamos transaccion
         try{
             $conexion->beginTransaction();
-            $consulta = "INSERT INTO clientes (CIF_DNI, RAZON_SOCIAL, DOMICILIO_SOCIAL, CIUDAD, EMAIL, TELEFONO, NICK, CONTRASEÑA)
-                VALUES (:rsoc, :cif, :dsoc, :ciu, :tlf, :mail, :nick, :pass)";
-            $parametros = [":rsoc" => $usuario['RAZON_SOCIAL'], ":cif" => $usuario['CIF_DNI'], ":dsoc" => $usuario['DOMICILIO_SOCIAL'], ":ciu" => $usuario['CIUDAD'], ":tlf" => $usuario['EMAIL'], ":mail" => $usuario['TELEFONO'], ":nick" => $usuario['NICK'], ":pass" => $usuario['CONTRASEÑA']];
-            $resultado = $conexion->prepare($consulta);
+            $consulta1 = "INSERT INTO clientes
+            (CIF_DNI, RAZON_SOCIAL, DOMICILIO_SOCIAL, CIUDAD, EMAIL, TELEFONO, NICK, CONTRASEÑA)
+            VALUES (:cif, :rsoc, :dsoc, :ciu, :mail, :tlf, :nick, :pass)";
+            $parametros = [
+                ":rsoc" => $user['RAZON_SOCIAL'],
+                ":cif" => $user['CIF_DNI'],
+                ":dsoc" => $user['DOMICILIO_SOCIAL'],
+                ":ciu" => $user['CIUDAD'],
+                ":tlf" => $user['EMAIL'],
+                ":mail" => $user['TELEFONO'],
+                ":nick" => $user['NICK'],
+                ":pass" => $user['CONTRASEÑA']
+            ];
+            $resultado = $conexion->prepare($consulta1);
+            /*$resultado->bindParam(":rsoc", $user['RAZON_SOCIAL']);
+            $resultado->bindParam(":cif", $user['CIF_DNI']);
+            $resultado->bindParam(":dsoc", $user['DOMICILIO_SOCIAL']);
+            $resultado->bindParam(":ciu", $user['CIUDAD']);
+            $resultado->bindParam(":tlf", $user['EMAIL']);
+            $resultado->bindParam(":mail", $user['TELEFONO']);
+            $resultado->bindParam(":nick", $user['NICK']);
+            $resultado->bindParam(":pass", $user['CONTRASEÑA']);*/
+
             $resultado->execute($parametros);
 
-            if($introducido = $resultado->fetch(PDO::FETCH_ASSOC)){
+            if($resultado->rowCount() > 0){
                 //solo nos falta eliminar la solicitud
-                $consulta = "DELETE FROM solicitudes WHERE ID_SOLICITUD = :cod";
-                $resultado = $conexion->prepare($consulta);
+                $consulta2 = "DELETE FROM solicitudes WHERE ID_SOLICITUD = :cod";
+                $resultado = $conexion->prepare($consulta2);
                 $parametros = [":cod" => $cod];
-                $resultado->execute();
+                $resultado->execute($parametros);
+
                 if($resultado->rowCount()>0){
                     $conexion->commit();
+                    $json['success'] = true;
+
                 }
                 else{
                     $json['error'] = "Error al eliminar la solicitud";
@@ -73,19 +95,10 @@ if(isset($_POST['aceptar'])){
                 $json['error'] = "Error al introducir el cliente";
             }
         }
-
-
         catch (Exception $e) {
             $conexion->rollBack();
             echo "Failed: " . $e->getMessage();
-            $permitido = false;
-        }
-
-        if($permitido == true){
-            $json['success'] == true;
-        }
-        else{
-            $json['success'] == false;
+            $json['success'] = false;
         }
 
         echo json_encode($json);
@@ -108,4 +121,6 @@ if(isset($_POST['rechazar'])){
     else{
         $json['error'] = "Error al eliminar la solicitud";
     }
+
+    echo json_encode($json);
 }

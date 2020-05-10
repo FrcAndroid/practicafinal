@@ -1,5 +1,5 @@
 <?php
-include "base_datos.php";
+include "../base_datos.php";
 include "inicio_gestion.php";
 define("USUARIO", "GESTOR");
 //simplemente añadimos el cliente, no hay necesidad de ajax

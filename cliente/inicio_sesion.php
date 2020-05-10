@@ -1,16 +1,16 @@
-<?php include 'portada.php' ?>
-<?php include 'base_datos.php'?>
+<?php include '../portada.php' ?>
+<?php include '../base_datos.php' ?>
 
 <?php
 
 //comprobamos que el login es correcto
 if(isset($_POST['iniciar'])){
-    define ("USUARIO", "GESTOR");
+    define ("USUARIO", "CLIENTES");
 
     $user = $_POST['nombre'];
     $pass = $_POST['pass'];
     $conexion = conectar(USUARIO);
-    $consulta = "SELECT * FROM usuarios_gestion WHERE NICK = :user AND CONTRASEÑA = :pass";
+    $consulta = "SELECT * FROM clientes WHERE NICK = :user AND CONTRASEÑA = :pass AND ESTADO = 's'";
     $resultado = $conexion->prepare($consulta);
 
     $parametros = [
@@ -19,17 +19,10 @@ if(isset($_POST['iniciar'])){
     ];
     $resultado->execute($parametros);
     if($usuario = $resultado->fetch(PDO::FETCH_ASSOC)){//consulta se ha realizado con exito
-        //hay usuario, lo metemos en sesión y introducimos el log del acceso
-        $consulta = "INSERT INTO accesos (FECHA_HORA_ACCESO, COD_USUARIO) VALUES (:fecha, :cod) ";
-        $parametros = [":fecha" => date("Y-m-d H:i:s"), ":cod" => $usuario['NICK']];
-        $resultado = $conexion->prepare($consulta);
-        $resultado->execute($parametros);
-        if($resultado->rowCount() > 0){
-            session_start();
-            $_SESSION['login'] = $usuario;
-            header("location:inicio_gestion.php");
-        }
-
+        //hay usuario, lo metemos en sesión y redirigimos a inicio con area de clientes
+        session_start();
+        $_SESSION['cliente'] = $usuario;
+        header("location:inicio_clientes.php");
     }
     else{
         echo "Usuario o contraseña inválidos.";
@@ -39,8 +32,8 @@ if(isset($_POST['iniciar'])){
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8">
-    <link rel='stylesheet' type='text/css' href='trabajodaw.css'>
-    <link rel='stylesheet' type='text/css' href='bootstrap.css'>
+    <link rel='stylesheet' type='text/css' href='../trabajodaw.css'>
+    <link rel='stylesheet' type='text/css' href='../bootstrap.css'>
 </head>
 <body>
 <h1 class="offset-md-3">Inicia sesión</h1>
@@ -52,6 +45,6 @@ if(isset($_POST['iniciar'])){
     <div class="offset-md-3">
         <input type='submit' id='iniciar' name="iniciar" class='btn btn-default btn-info' value="Iniciar sesión">
     </div>
-    <input type='hidden' name='usuario' id='usuario' value='GESTOR'>
+    <input type='hidden' name='usuario' id='usuario' value='CLIENTES'>
 </form>
 </body>

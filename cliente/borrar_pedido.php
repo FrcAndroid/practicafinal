@@ -1,6 +1,6 @@
 <?php
 include 'inicio_clientes.php';
-include 'base_datos.php';
+include '../base_datos.php';
 
 define("USUARIO", "CLIENTES");
 //enseñamos las lineas del pedido y permitimos que borre las que no estan pasadas a albarán todavía
@@ -9,19 +9,19 @@ $id_pedido = $_GET['pedido'];
 $conexion = conectar(USUARIO);
 $consulta = "SELECT * FROM lineas_pedidos l JOIN articulos a on l.COD_ARTICULO = a.COD_ARTICULO WHERE COD_PEDIDO = :pedido AND COD_CLIENTE = :cliente";
 $resultado = $conexion->prepare($consulta);
-$parametros = [":pedido" => $id_pedido, ":cliente" => $user];
+$parametros = [":pedido" => $id_pedido, ":cliente" => $_SESSION['cliente']['COD_CLIENTE']];
 $resultado->execute($parametros);
 
 
 
 ?>
-<script src="moment.min.js"></script>
-<script src="borrar.js"></script>
+<script src="../moment.min.js"></script>
+<script src="../gestor/borrar.js"></script>
 <!-- usamos estas librerias para poder usar sort dinamico en las tablas -->
 <h1>Modificar pedidos</h1>
 <br>
 
-<table id="tabla" class="table table-striped table-bordered" data-toggle="table" cellspacing="0">
+<table id="tabla" class="table table-striped table-bordered" data-toggle="table">
     <thead>
     <tr>
         <th>Nº Linea Pedido

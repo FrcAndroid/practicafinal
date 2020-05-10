@@ -1,6 +1,6 @@
 <?php
 include 'inicio_gestion.php';
-include 'base_datos.php';
+include '../base_datos.php';
 
 //mostramos en tabla los pedidos, enseñando botones para modificar y borrar pedido que nos llevaran a
 //poder modificar las LINEAS, pero ahora solo mostramos pedidos
@@ -52,9 +52,9 @@ $facturas = $conexion->prepare($consulta1);
 $facturas->execute();
 
 ?>
-    <script src="moment.min.js"></script>
-    <link rel="stylesheet" href="bootstrap-sortable.css">
-    <script src="bootstrap-sortable.js"></script>
+    <script src="../moment.min.js"></script>
+    <link rel="stylesheet" href="../bootstrap-sortable.css">
+    <script src="../bootstrap-sortable.js"></script>
     <!-- usamos estas librerias para poder usar sort dinamico en las tablas -->
     <h1>Ver pedidos</h1>
     <form method='post' action=<?=$_SERVER['PHP_SELF']?>>

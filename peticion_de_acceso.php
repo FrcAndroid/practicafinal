@@ -1,5 +1,5 @@
 <?php
-//include 'control_sesion.php';
+//include 'control_sesion_gestor.php';
 define ("USUARIO", "LIMITADO");
 include 'base_datos.php';
 //en teoria nos hemos conectado con el usuario LIMITADO

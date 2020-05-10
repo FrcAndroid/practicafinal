@@ -1,5 +1,5 @@
 <?php
-include "base_datos.php";
+include "../base_datos.php";
 define("USUARIO", "CLIENTES");
 //todas las comprobaciones se hacen antes de haber entrado aquí, así que solo hacemos el delete
 if(isset($_POST['borrar'])){//venimos a borrar

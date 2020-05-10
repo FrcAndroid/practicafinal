@@ -1,6 +1,6 @@
 <?php
-include "base_datos.php";
-include "control_sesion.php";
+include "../base_datos.php";
+include "../control_sesion_gestor.php";
 define("USUARIO", "GESTOR");
 //recibimos los datos del ajax
 if(isset($_POST['valores'])){

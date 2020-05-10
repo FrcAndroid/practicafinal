@@ -28,16 +28,11 @@
     margin-right: 10px;
 }
 
-.dropdown-menu{
-    background-color:#9fcde1;
-    font-size: 20px;
-}
-
 .dropdown-item{
     color: white;
 }
 
-.dropdown-toggle{
+.nav-item{
     font-size: 20px;
 
 }
@@ -103,3 +98,4 @@ a.sort-by:after {
 	border-top-color: #666;
 	margin-top: 1px;
 }
+

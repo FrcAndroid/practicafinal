@@ -41,6 +41,18 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Gestión de artículos
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="insertar_articulo.php">Insertar artículo</a>
+                    <a class="dropdown-item" href="buscar_articulo.php">Buscar artículo</a>
+
+
+
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Procesos
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -51,6 +63,6 @@
         </ul>
 
     </div>
-    <p id="user">Bienvenido <?= $user['NICK'] ?> [GESTOR]</p>
-    <a class="btn btn-outline-danger my-2 my-sm-0 derecha" href="inicio_gestor.php">Cerrar sesión</a>
+    <p id="user">Bienvenido <?= $_SESSION['login']['NICK'] ?> [GESTOR]</p>
+    <a class="btn btn-outline-danger my-2 my-sm-0 derecha" href="cerrar_sesionGestor.php">Cerrar sesión</a>
 </nav>

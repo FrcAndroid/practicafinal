@@ -1,11 +1,11 @@
 <?php
 include 'inicio_clientes.php';
-include 'base_datos.php';
+include '../base_datos.php';
 define("USUARIO", "CLIENTES");
 //usamos la variable de sesion para acceder a los valores
 $valores = [];
 foreach($_SESSION['login'] as $key=>$value){
-    if($key == "ID_SOLICITUD" || $key == "CIF_DNI" || $key == "NICK" || $key == "COD_CLIENTE"){
+    if($key == "ID_SOLICITUD" || $key == "CIF_DNI" || $key == "NICK" || $key == "COD_CLIENTE" ||  $key == "ESTADO" ){
     }
     else{
         $valores[$key] = $value;
@@ -23,16 +23,16 @@ SET RAZON_SOCIAL = :razon,
   WHERE COD_CLIENTE = :cod";
             $resultado = $conexion->prepare($consulta);
             $parametros = [":razon" => $_POST['RAZON_SOCIAL'], ":dom"=> $_POST['DOMICILIO_SOCIAL'], ":ciu"=> $_POST['CIUDAD'], ":email" => $_POST['EMAIL'], ":telefono" => $_POST['TELEFONO'], ":pass" => $_POST['CONTRASEÑA']
-             ,":cod" => $user['COD_CLIENTE']];
+             ,":cod" => $_SESSION['cliente']['COD_CLIENTE']];
             $resultado->execute($parametros);
             if($resultado->rowCount() > 0){
                 echo "Modificación realizada con éxito.";
                 $consulta = "SELECT * FROM clientes WHERE COD_CLIENTE = :cod"; //para actualizar la var de sesion
-                $parametros = [":cod" => $user['COD_CLIENTE']];
+                $parametros = [":cod" => $_SESSION['cliente']['COD_CLIENTE']];
                 $resultado = $conexion->prepare($consulta);
                 $resultado->execute($parametros);
                 if($usuario = $resultado->fetch(PDO::FETCH_ASSOC)){//hay usuario
-                    $_SESSION['login'] = $usuario;
+                    $_SESSION['cliente'] = $usuario;
                 }
             }
 

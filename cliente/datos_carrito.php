@@ -1,6 +1,6 @@
 <?php
-include "base_datos.php";
-include "control_sesion.php";
+include "../base_datos.php";
+include "control_sesion_cliente.php";
 define("USUARIO", "CLIENTES");
 //recibimos los datos del ajax
 if(isset($_POST['valores'])){
@@ -32,7 +32,7 @@ if(isset($_POST['generar'])){
     //recibimos el array de pedidos y lo generamos con transaccion atomica
     $pedido = $_POST['pedido'];
     $permitido = true;
-    $cliente = $user;
+    $cliente = $_SESSION['cliente'];
 
     //primero introducimos el pedido nuevo
     $conexion = conectar(USUARIO);
@@ -47,7 +47,7 @@ if(isset($_POST['generar'])){
     try{
         $conexion->beginTransaction();
         $consulta = "INSERT INTO pedidos (COD_CLIENTE, FECHA, GENERADO_POR_CLIENTE) VALUES (:cliente, :fecha, :generado)";
-        $parametros = [":fecha"=> date("Y-m-d H:i:s"), ":generado" => "SI", ":cliente" => $cliente];
+        $parametros = [":fecha"=> date("Y-m-d H:i:s"), ":generado" => "SI", ":cliente" => $cliente['COD_CLIENTE']];
         $resultado = $conexion->prepare($consulta);
         $resultado->execute($parametros);
 
@@ -69,7 +69,7 @@ if(isset($_POST['generar'])){
                 ":codusu" => NULL, //usuario que ha gestionado el pedido (GESTOR)
                 ":codped" => $cod_pedido['COD_PEDIDO'],
                 ":codart" => $pedido[$i]['ARTICULO'],
-                ":cliente" => $cliente
+                ":cliente" => $cliente['COD_CLIENTE']
             ];
             $resultado = $conexion->prepare($consulta);
             $resultado->execute($parametros);

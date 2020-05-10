@@ -1,5 +1,5 @@
 <?php
-include "base_datos.php";
+include "../base_datos.php";
 include "inicio_gestion.php";
 //gestionamos los clientes aqui
 define("USUARIO", "GESTOR");
@@ -14,9 +14,9 @@ $solicitudes = $conexion->prepare($consulta);
 $solicitudes->execute();
 
 ?>
-<script src="moment.min.js"></script>
-<link rel="stylesheet" href="bootstrap-sortable.css">
-<script src="bootstrap-sortable.js"></script>
+<script src="../moment.min.js"></script>
+<link rel="stylesheet" href="../bootstrap-sortable.css">
+<script src="../bootstrap-sortable.js"></script>
 <script src="clientes.js"></script>
 <!-- usamos estas librerias para poder usar sort dinamico en las tablas -->
 <h1>Gestión de clientes</h1>
