@@ -1,6 +1,7 @@
 <?php
+
 include "../base_datos.php";
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 //todas las comprobaciones se hacen antes de haber entrado aquí, así que solo hacemos el delete
 if(isset($_POST['borrar'])){//venimos a borrar
     $json = [];
@@ -14,6 +15,28 @@ if(isset($_POST['borrar'])){//venimos a borrar
     $resultado->execute($parametros);
     if($resultado->execute() > 0){//se han borrado
         $json['exito'] = "Linea borrada con éxito";
+        //ahora comprobamos si es la última linea del pedido, y si ya no quedan lineas, borramos el pedido al completo
+        $consulta = "SELECT * FROM lineas_pedidos WHERE COD_PEDIDO = :cod ";
+        $parametros = [":cod" => $cod];
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute($parametros);
+        if(count($resultado->fetchAll(PDO::FETCH_ASSOC)) < 1){
+            //borramos el pedido al completo
+            $consulta = "DELETE FROM pedidos WHERE COD_PEDIDO = :cod";
+            $parametros = [":cod" => $cod];
+            $resultado = $conexion->prepare($consulta);
+            $resultado->execute($parametros);
+            if($resultado->rowCount() > 0){
+                $json['borrado'] = true;
+                $json['exito'] = "Pedido borrado con éxito";
+            }
+            else{
+                $json['error'] = "Fallo al borrar el pedido";
+            }
+        }
+        else{
+            $json['exito'] = "Linea borrada con éxito";
+        }
     }
     else{
         $json['error'] = "Fallo al borrar la línea";

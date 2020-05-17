@@ -2,7 +2,7 @@
 //simplemente comprobamos que los datos son validos y los actualizamos en la base de datos, mandando un mensaje de exito
 //si sale bien
 include "../base_datos.php";
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 
 if(isset($_POST['value'])){
     $json = [];
@@ -20,7 +20,10 @@ if(isset($_POST['value'])){
             $articulo = $conexion->prepare($consulta);
             $parametros = [":value" => $value];
             $articulo->execute($parametros);
-            if(count($articulo->fetchAll(PDO::FETCH_ASSOC)) <= 0){//NO HAY ARTICULOS
+            $art = $articulo->fetch(PDO::FETCH_ASSOC);
+            //$art es un array con las variables del articulo
+
+            if(count($art) <= 0){//NO HAY ARTICULOS
                 $json['error'] = "El código de producto no es válido";
             }
             else{
@@ -29,7 +32,32 @@ if(isset($_POST['value'])){
                 $parametros = [":value"=> $value, ":cod"=> $cod, ":linea" => $linea];
                 $modificar->execute($parametros);
                 if($modificar->rowCount() > 0){
-                    $json['exito'] = "Artículo modificado con éxito.";
+                    //ahora modificamos el precio en base al articulo
+                    //primero seleccionamos la cantidad que ya existe en la linped
+                    $consulta = "SELECT * FROM lineas_pedidos WHERE COD_PEDIDO = :cod AND NUM_LINEA_PEDIDO = :linea";
+                    $parametros = [":cod"=> $cod, ":linea" => $linea];
+                    $resultado = $conexion->prepare($consulta);
+                    $resultado->execute($parametros);
+                    $datos = $resultado->fetch(PDO::FETCH_ASSOC);
+                    //ahora $datos tiene informacion de la linea de pedidos
+                    if(count($datos) <= 0){
+                        $json['error'] = "Fallo al actualizar";
+                    }
+                    else{
+                        $consulta = "UPDATE lineas_pedidos SET PRECIO = :precio WHERE COD_PEDIDO = :cod AND NUM_LINEA_PEDIDO = :linea ";
+                        $parametros = [":precio"=> $art['PRECIO'] * $datos['CANTIDAD'], ":cod"=> $cod, ":linea" => $linea];
+                        $resultadofinal = $conexion->prepare($consulta);
+                        $resultadofinal->execute($parametros);
+                        if($resultadofinal->rowCount() > 0){
+                            $json['success'] = "Artículo modificado con éxito.";
+                        }
+                        else{
+                            $json['error'] = "Fallo al actualizar";
+                        }
+                    }
+                }
+                else{
+                    $json['error'] = "Fallo al actualizar";
                 }
             }
 
@@ -40,7 +68,29 @@ if(isset($_POST['value'])){
             $parametros = [":value"=> $value, ":cod"=> $cod, ":linea" => $linea];
             $modificar->execute($parametros);
             if($modificar->rowCount() > 0){
-                $json['exito'] = "Cantidad modificada con éxito.";
+                //modificamos el precio
+                //solo hemos cambiado la cantidad, asi que sacamos el precio unitario con un select
+                $consulta = "SELECT * FROM lineas_pedidos WHERE COD_PEDIDO = :cod AND NUM_LINEA_PEDIDO = :linea";
+                $parametros = [":cod"=> $cod, ":linea" => $linea];
+                $resultado = $conexion->prepare($consulta);
+                $resultado->execute($parametros);
+                $datos = $resultado->fetch(PDO::FETCH_ASSOC);
+                if(count($datos) <=0){
+                    $json['error'] = 'Fallo al actualizar';
+                }
+                else{
+                    //ahora podemos acceder al precio y a la cantidad para sacar el precio definitivo
+                    $consulta = "UPDATE lineas_pedidos SET PRECIO = :precio WHERE COD_PEDIDO = :cod AND NUM_LINEA_PEDIDO = :linea";
+                    $parametros = [":precio" => $datos['PRECIO'] * $datos['CANTIDAD'], ":cod"=> $cod, ":linea" => $linea];
+                    $resultadofinal = $conexion->prepare($consulta);
+                    $resultadofinal->execute($parametros);
+                    if($resultadofinal->rowCount() > 0){
+                        $json['success'] = "Cantidad modificada con éxito.";
+                    }
+                    else{
+                        $json['error'] = "Fallo al actualizar";
+                    }
+                }
             }
         }
         else{

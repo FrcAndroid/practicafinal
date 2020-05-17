@@ -3,14 +3,14 @@ include 'inicio_clientes.php';
 include '../base_datos.php';
 
 //mostramos en tabla las facturas, solo consulta
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 
 
 if(!isset($_POST['buscar'])){
     $conexion = conectar(USUARIO);
     $consulta = "SELECT * FROM facturas WHERE COD_CLIENTE = :cliente";
     $resultado = $conexion->prepare($consulta);
-    $parametros = [":cliente" =>  $_SESSION['login']['COD_CLIENTE']];
+    $parametros = [":cliente" =>  $_SESSION['cliente']['COD_CLIENTE']];
     $resultado->execute($parametros);
 
 
@@ -20,11 +20,11 @@ else{
 
     $conexion = conectar(USUARIO);
     $consulta = "SELECT * FROM facturas WHERE COD_CLIENTE = :cliente";//string inicial de consulta
-    $parametros[":cliente"] = $_SESSION['login']['COD_CLIENTE'];
+    $parametros[":cliente"] = $_SESSION['cliente']['COD_CLIENTE'];
 
-    if(isset($_POST['pedido']) && !empty($_POST['pedido'])){
-        $consulta = $consulta. " AND COD_PEDIDO = :pedido";
-        $parametros[":pedido"] = $_POST['pedido'];
+    if(isset($_POST['factura']) && !empty($_POST['factura'])){
+        $consulta = $consulta. " AND COD_FACTURA = :factura";
+        $parametros[":factura"] = $_POST['factura'];
     }
 
     if(isset($_POST['fecha'])&& !empty($_POST['fecha'])){
@@ -48,8 +48,8 @@ else{
 <!-- usamos estas librerias para poder usar sort dinamico en las tablas -->
 <h1>Ver facturas</h1>
 <form method='post' action=<?=$_SERVER['PHP_SELF']?>>
-    <label for="pedido">Pedido</label>
-    <input type='number' name='pedido' id='pedido'>
+    <label for="factura">Factura</label>
+    <input type='number' name='factura' id='factura'>
     <label for="fecha">Fecha</label>
     <input type='date' name='fecha' id='fecha'>
     <input type='submit' class='btn-info' value='Buscar' id='buscar' name='buscar'>

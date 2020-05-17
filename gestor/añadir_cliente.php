@@ -20,7 +20,8 @@ if(isset($_POST['alta'])){
     $resultado = $conexion->prepare($consulta);
     $resultado->execute($parametros);
     if($resultado->rowCount() > 0){
-        header("location:gestion_clientes.php?success=true");
+        //header("location:gestion_clientes.php?success=true");
+        echo "<script> window.location.href='gestion_clientes.php' </script>";
     }
 
 }
@@ -44,6 +45,6 @@ if(isset($_POST['alta'])){
     <label class="required   offset-md-3 col-form-label" for='pass'>Contraseña </label>
     <input type='password' name='pass' id='pass' class="form-control col-md-4 offset-md-3" autocomplete="on"><br>
     <div class="text-center">
-        <input type='submit' id='alta' name="alta" data-user="alta" class='btn btn-default btn-info' value="Solicitar alta">
+        <input type='submit' id='alta' name="alta" data-user="alta" class='btn btn-default btn-info' value="Añadir cliente">
     </div>
 </form>

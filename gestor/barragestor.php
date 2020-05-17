@@ -16,7 +16,7 @@
                     Gestión de pedidos
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="ver_pedido_gestor.php">Ver Pedidos</a>
+                    <a class="dropdown-item" href="ver_pedido_gestor.php">Gestiona Pedidos</a>
                     <a class="dropdown-item" href="realizar_pedido_gestor.php">Realizar Pedidos</a>
                 </div>
             </li>
@@ -25,7 +25,8 @@
                     Gestión de albaranes
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="ver_albaranes_gestor.php">Ver Albaranes</a>
+                    <a class="dropdown-item" href="ver_albaranes_gestor.php">Gestiona Albaranes</a>
+                    <a class="dropdown-item" href="albaran_factura.php">Albaran a Factura</a>
 
                 </div>
             </li>
@@ -34,9 +35,7 @@
                     Gestión de facturas
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="ver_facturas_gestor.php">Ver Facturas</a>
-                    <a class="dropdown-item" href="desfacturar_albaran.php">Desfacturar Albarán</a>
-                    <a class="dropdown-item" href="imprimir_factura.php">Imprimir Factura</a>
+                    <a class="dropdown-item" href="ver_facturas_gestor.php">Gestiona Facturas</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -51,18 +50,9 @@
 
                 </div>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Procesos
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="pedido_albaran.php">Pedido a Albarán</a>
-                    <a class="dropdown-item" href="albaran_factura.php">Albarán a Factura</a>
-                </div>
-            </li>
         </ul>
 
     </div>
-    <p id="user">Bienvenido <?= $_SESSION['login']['NICK'] ?> [GESTOR]</p>
+    <p id="user">Bienvenido <?= $_SESSION['gestor']['NICK'] ?> [GESTOR]</p>
     <a class="btn btn-outline-danger my-2 my-sm-0 derecha" href="cerrar_sesionGestor.php">Cerrar sesión</a>
 </nav>

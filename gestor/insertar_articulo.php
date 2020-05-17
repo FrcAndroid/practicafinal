@@ -48,10 +48,10 @@ if(isset($_POST['enviar'])){
 <h1 class="offset-md-3">Insertar nuevo artículo</h1>
     <form method="post" action=<?=$_SERVER['PHP_SELF']?>>
         <label for="nombre" class="required  offset-md-3 col-form-label">Nombre</label>
-        <input type="text" name="nombre" id="nombre" class="form-control col-md-4 offset-md-3" required value=<?= isset($nombre)? $nombre : ''?>>
+        <input type="text" name="nombre" id="nombre" class="form-control col-md-4 offset-md-3" required value=<?= isset($nombre)? "'$nombre'" : ''?>>
 
         <label for="desc"  class="required  offset-md-3 col-form-label">Descripción</label>
-        <input type="text" name="desc" id="desc" class="form-control col-md-4 offset-md-3" required value=<?= isset($desc)? $desc : ''?>>
+        <input type="text" name="desc" id="desc" class="form-control col-md-4 offset-md-3" required value=<?= isset($desc)? "'$desc'" : ''?>>
 
         <label for="precio"  class="required  offset-md-3 col-form-label">Precio</label>
         <input type="number" name="precio" id="precio" class="form-control col-md-4 offset-md-3" required value=<?= isset($precio)? $precio : ''?>>

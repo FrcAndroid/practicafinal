@@ -34,7 +34,7 @@
         </ul>
 
     </div>
-    <p id="user">Bienvenido <?= $user['NICK'] ?></p>
+    <p id="user">Bienvenido <?= $_SESSION['cliente']['NICK'] ?></p>
     <a class="btn btn-outline-info my-2 my-sm-0 derecha" href="modificar_datos.php">Modificar datos</a>
     <a class="btn btn-outline-danger my-2 my-sm-0 derecha" href="cerrar_sesion.php">Cerrar sesión</a>
 </nav>

@@ -1,10 +1,10 @@
 <?php
 include 'inicio_clientes.php';
 include '../base_datos.php';
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 //usamos la variable de sesion para acceder a los valores
 $valores = [];
-foreach($_SESSION['login'] as $key=>$value){
+foreach($_SESSION['cliente'] as $key=>$value){
     if($key == "ID_SOLICITUD" || $key == "CIF_DNI" || $key == "NICK" || $key == "COD_CLIENTE" ||  $key == "ESTADO" ){
     }
     else{
@@ -46,7 +46,7 @@ SET RAZON_SOCIAL = :razon,
     <?php
     foreach($valores as $key=>$value){?>
         <label class="required  offset-md-3 col-form-label" for=<?=$key?>><?=$key?></label>
-        <input class="form-control col-md-4 offset-md-3" type='text' id=<?=$key?> name=<?=$key?> value=<?=$value?>>
+        <input class="form-control col-md-4 offset-md-3" type='text' id=<?=$key?> name="<?=$key?>" value="<?=$value?>">
     <?php } ?><br>
     <div>
         <input type='submit' id='modificar' name="modificar" class='btn btn-default btn-info offset-md-3' value="Modificar datos">

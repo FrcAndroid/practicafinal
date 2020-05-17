@@ -2,7 +2,7 @@
 include 'control_sesion_gestor.php';
 include '../portada.php';
 
-if(isset($user)){
+if(isset($_SESSION)){
     include 'barragestor.php';
 }
 

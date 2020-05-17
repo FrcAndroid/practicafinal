@@ -2,23 +2,29 @@
 include 'inicio_clientes.php';
 include '../base_datos.php';
 
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 //enseñamos las lineas del pedido y permitimos que borre las que no estan pasadas a albarán todavía
 $id_pedido = $_GET['pedido'];
 
 $conexion = conectar(USUARIO);
-$consulta = "SELECT * FROM lineas_pedidos l JOIN articulos a on l.COD_ARTICULO = a.COD_ARTICULO WHERE COD_PEDIDO = :pedido AND COD_CLIENTE = :cliente";
+$consulta = "SELECT * FROM lineas_pedidos l JOIN articulos a on l.COD_ARTICULO = a.COD_ARTICULO WHERE COD_PEDIDO = :pedido";
 $resultado = $conexion->prepare($consulta);
-$parametros = [":pedido" => $id_pedido, ":cliente" => $_SESSION['cliente']['COD_CLIENTE']];
+$parametros = [":pedido" => $id_pedido];
 $resultado->execute($parametros);
 
+$consulta1 = "SELECT NUM_LINEA_PEDIDO FROM lineas_albaran WHERE COD_PEDIDO = :pedido";
+//seleccionamos todas las lineas que se encuentren en el albaran
+$parametros = [":pedido" => $id_pedido];
+$procesados = $conexion->prepare($consulta1);
+$procesados->execute($parametros);
+$lineasProcesadas = $procesados->fetchAll(PDO::FETCH_ASSOC);
 
 
 ?>
 <script src="../moment.min.js"></script>
-<script src="../gestor/borrar.js"></script>
+<script src="borrar.js"></script>
 <!-- usamos estas librerias para poder usar sort dinamico en las tablas -->
-<h1>Modificar pedidos</h1>
+<h1>Borrar pedidos</h1>
 <br>
 
 <table id="tabla" class="table table-striped table-bordered" data-toggle="table">
@@ -32,48 +38,34 @@ $resultado->execute($parametros);
         </th>
         <th class="th-sm">Precio
         </th>
-
-
     </tr>
     </thead>
+
     <tbody>
     <?php
-    $repetir = true;
-    while($pedido = $resultado->fetch(PDO::FETCH_ASSOC)){
-    $borrar = true;
+    if(count($lineasProcesadas)<1) { ?>
+        <button class="eliminar btn btn-default btn-outline-danger">Borrar pedido</button>
+    <?php }  ?>
 
-    if(isset($_GET['lineas'])){//hay lineas no modificables, el pedido no es borrable
-        $lineas = $_GET['lineas'];
-
-
-        echo "No se puede borrar el pedido al completo porque hay lineas en albarán.";
-        for($i=0; $i< count($lineas); $i++){
-            if($pedido['NUM_LINEA_PEDIDO'] == $lineas[$i]){
+    <?php while($pedido = $resultado->fetch(PDO::FETCH_ASSOC)){
+        $borrar = true;
+        foreach ($lineasProcesadas as $linea) {
+            if ($linea["NUM_LINEA_PEDIDO"] == $pedido["NUM_LINEA_PEDIDO"]) {
                 $borrar = false;
             }
-        }
-    }
-    else{
-    if($repetir != false){?>
-        <button class="eliminar btn btn-default btn-outline-danger">Borrar pedido</button>
+        }?>
+        <td><?= $pedido['NUM_LINEA_PEDIDO'] ?> </td>
+        <td headers="COD_ARTICULO"><?= $pedido['COD_ARTICULO'] ?></td>
+        <td headers="CANTIDAD"><?= $pedido['CANTIDAD'] ?></td>
+        <td><?= $pedido['PRECIO'] ?></td>
 
-    <?php $repetir = false;} }
-    if($borrar == false){?>
-    <tr style="opacity: 25%">En albarán
-        <td id='pedidoTab' value=<?= $id_pedido ?>>
-            <?=$pedido['NUM_LINEA_PEDIDO']?> </td>
-        <?php }
-        else{?>
-    <tr>
-        <td value=<?= $id_pedido ?>> <button class="borrar btn btn-default btn-outline-danger">Borrar linea</button>
-            <?=$pedido['NUM_LINEA_PEDIDO']?> </td>
-        <?php } ?>
-
-
-        <td headers="COD_ARTICULO"><?=$pedido['COD_ARTICULO']?></td>
-        <td headers="CANTIDAD"><?=$pedido['CANTIDAD']?></td>
-        <td><?=$pedido['PRECIO']?></td>
-        <?php } ?>
+        <?php if ($borrar != false){ ?>
+            <td value=<?= $id_pedido ?>>
+            <button class="borrar btn btn-default btn-outline-danger">Borrar linea</button>
+        <?php }else{?>
+            <td class="font-weight-bold">En albarán</td>
+        <?php }?>
+    <?php } ?>
     </tbody>
 </table>
 <button class="btn btn-default btn-outline-dark" onclick="window.history.back();">Volver</button>

@@ -4,6 +4,7 @@ include 'inicio_gestion.php';
 include '../base_datos.php';
 
 $parametros = [];
+$arrayNoBorrables = [];
 define("USUARIO", 'GESTOR');
 //hacemos una busqueda preliminar para saber que articulos son borrables
 $conexion = conectar(USUARIO);
@@ -12,7 +13,7 @@ $borrable = $conexion->prepare($consulta);
 $borrable->execute();
 //tenemos una lista de articulos no borrables, lo guardamos en un array para iterarlo
 while($borrar = $borrable->fetch(PDO::FETCH_ASSOC)){
-    $arrayBorrables[] = $borrar["COD_ARTICULO"];
+    $arrayNoBorrables[] = $borrar["COD_ARTICULO"];
 }
 if(!isset($_POST['buscar'])){
     $conexion = conectar(USUARIO);
@@ -98,7 +99,6 @@ else{
         $parametros[":estado"] = $activo;
     }
 
-    var_dump($consulta);
     $resultado = $conexion->prepare($consulta);
     $resultado->execute($parametros);
 
@@ -130,9 +130,9 @@ else{
     <input type='number' class="form-control col-md-2 offset-md-3" name='iva' id='iva'>
 
     <label for="activo" class="offset-md-3 col-form-label">Activado</label>
-    <br><input type="radio" class="offset-md-3 col-form-label" id="si" name="activo" value="si">
+    <br><input type="radio" class="offset-md-3 col-form-label" id="si" name="activo" value="s">
     <label for="si">Si</label><br>
-    <input type="radio" class="offset-md-3 col-form-label" id="no" name="activo" value="no">
+    <input type="radio" class="offset-md-3 col-form-label" id="no" name="activo" value="n">
     <label for="no">No</label><br>
 
     <input type='submit' class='btn-info offset-md-3 col-form-label' value='Buscar' id='buscar' name='buscar'>
@@ -180,7 +180,7 @@ else{
 
         <?php
         $permitido = true;
-        foreach($arrayBorrables as $artBorrable){
+        foreach($arrayNoBorrables as $artBorrable){
 
             if($artBorrable == $articulo["COD_ARTICULO"]){
                 $permitido = false;

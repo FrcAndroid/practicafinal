@@ -1,6 +1,6 @@
 <?php
 include "../base_datos.php";
-include "../control_sesion_gestor.php";
+include "control_sesion_gestor.php";
 define("USUARIO", "GESTOR");
 //recibimos los datos del ajax
 if(isset($_POST['valores'])){
@@ -33,7 +33,7 @@ if(isset($_POST['generar'])){
     $pedido = $_POST['pedido'];
     $permitido = true;
     $cliente = 0;
-    $gestor = $user['COD_USUARIO_GESTION'];
+    $gestor = $_SESSION['gestor']['COD_USUARIO_GESTION'];
     
     //primero introducimos el pedido nuevo
     $conexion = conectar(USUARIO);

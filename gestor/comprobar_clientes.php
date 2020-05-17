@@ -1,6 +1,6 @@
 <?php
 include '../base_datos.php';
-include '../control_sesion_gestor.php';
+include 'control_sesion_gestor.php';
 define("USUARIO", "GESTOR");
 
 if(isset($_POST['alta'])){

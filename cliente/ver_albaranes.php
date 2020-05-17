@@ -4,13 +4,13 @@ include '../base_datos.php';
 
 //mostramos en tabla los pedidos, enseñando botones para modificar y borrar pedido que nos llevaran a
 //poder modificar las LINEAS, pero ahora solo mostramos pedidos
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 
 if(!isset($_POST['buscar'])){
     $conexion = conectar(USUARIO);
     $consulta = "SELECT * FROM albaranes WHERE COD_CLIENTE = :cliente";
     $resultado = $conexion->prepare($consulta);
-    $parametros = [":cliente" => $_SESSION['login']['COD_CLIENTE']];
+    $parametros = [":cliente" => $_SESSION['cliente']['COD_CLIENTE']];
     $resultado->execute($parametros);
 
 
@@ -20,11 +20,11 @@ else{
 
     $conexion = conectar(USUARIO);
     $consulta = "SELECT * FROM albaranes WHERE COD_CLIENTE = :cliente";//string inicial de consulta
-    $parametros[":cliente"] = $_SESSION['login']['COD_CLIENTE'];
+    $parametros[":cliente"] = $_SESSION['cliente']['COD_CLIENTE'];
 
-    if(isset($_POST['pedido']) && !empty($_POST['pedido'])){
-        $consulta = $consulta. " AND COD_PEDIDO = :pedido";
-        $parametros[":pedido"] = $_POST['pedido'];
+    if(isset($_POST['albaran']) && !empty($_POST['albaran'])){
+        $consulta = $consulta. " AND COD_ALBARAN = :albaran";
+        $parametros[":albaran"] = $_POST['albaran'];
     }
 
     if(isset($_POST['fecha'])&& !empty($_POST['fecha'])){
@@ -47,8 +47,8 @@ else{
 <!-- usamos estas librerias para poder usar sort dinamico en las tablas -->
 <h1>Ver albaranes</h1>
 <form method='post' action=<?=$_SERVER['PHP_SELF']?>>
-    <label for="pedido">Pedido</label>
-    <input type='number' name='pedido' id='pedido'>
+    <label for="albaran">Albaran</label>
+    <input type='number' name='albaran' id='albaran'>
     <label for="fecha">Fecha</label>
     <input type='date' name='fecha' id='fecha'>
     <input type='submit' class='btn-info' value='Buscar' id='buscar' name='buscar'>

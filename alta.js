@@ -124,23 +124,15 @@ $(document).ready(function() {//entra aqui cuando la página ha cargado con exit
                     //los errores estan en response.errores
                     //done() es ejecutada cuándo se recibe la respuesta del servidor. response es el objeto JSON recibido
 
-                    $("#solicitud").remove();
-                    $("<div/>", {
-                        "id": "solicitud",
-                        "class": "text-success",
-                        "html": "Solicitud procesada con éxito.",
-                    }).appendTo("body");
-
+                    if(alert('Solicitud procesada con éxito!')){}
+                    else    window.history.back();
 
                 })
 
                 .fail(function(jqXHR, textStatus, errorThrown) {
-                    $("<div/>",{
-                        "id": "textFail",
-                        "class" : "text-danger",
-                        // .. you can go on and add properties
-                        "html" : "Algo ha fallado: " + textStatus,
-                    }).appendTo("body");
+
+                    alert("Error en la solicitud. " + textStatus);
+
 
                 });
         }

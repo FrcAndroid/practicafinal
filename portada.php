@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <?php
 
-    if(!isset($_SESSION['login'])){ ?>
+    if(!isset($_SESSION)){ ?>
     <script src="jquery.js"></script>
     <script src="popper.js"></script>
     <link rel='stylesheet' type='text/css' href='bootstrap.css'>

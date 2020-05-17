@@ -19,7 +19,7 @@ if(isset($_REQUEST['codart'])){
             $descuento = $_POST['descuento'];
             $iva = $_POST['iva'];
             $img = $_POST['img'];
-            $activo = $_POST['activo'];
+            isset($_POST['activo']) ? $activo = $_POST['activo']: $activo = 'n';
 
             $conexion = conectar(USUARIO);
             $consulta = "UPDATE articulos SET 
@@ -91,9 +91,9 @@ else{
     <input type="text" name="img" id="img" class="form-control col-md-4 offset-md-3" value="<?= isset($articulo['IMAGEN'])? $articulo['IMAGEN'] : ''?>">
 
    <label for="activo" class="offset-md-3 col-form-label">Activado</label>
-    <input type="radio" name="activo" value="SI" <?PHP if($articulo['ACTIVO'] == "SI") print "checked"?> >
+    <input type="radio" name="activo" value="s" <?PHP if($articulo['ACTIVO'] == "s") print "checked"?> >
     <label for="si">Si</label>
-    <input type="radio" name="activo" value="NO" <?PHP if($articulo['ACTIVO'] == "NO") print "checked"?> >    <label for="no">No</label><br>
+    <input type="radio" name="activo" value="n" <?PHP if($articulo['ACTIVO'] == "n") print "checked"?> >    <label for="no">No</label><br>
     <br>
     <input type="hidden" name="codart" id="codart" value=<?= isset($codart)? $codart: ''?>>
     <input  class=" btn-info col-md-2 offset-md-4" type="submit" name="modificar" id="modificar" value="Modificar Artículo">

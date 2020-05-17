@@ -68,7 +68,6 @@ function altaSolicitud($valores){
                     VALUES (:cif,:razonsocial,:domiciliosocial,:ciudad,:email,:tlf,:nick,:pass)
                     ";
     $solicitud = $conexion->prepare($consulta);
-    var_dump($nick);
     $parametros=[
         ":razonsocial"=>$razonsocial,
         ":cif"=>$cif,
@@ -147,7 +146,7 @@ function razonsocialValido(){
     if(isset($_POST['razonsocial']) && !empty($_POST['razonsocial'])){
         //comprobamos que nombre no contenga números y sea un nombre válido
         $razonsocial = $_POST['razonsocial'];
-        if(1 === preg_match('~[^a-zA-Z ]~', $razonsocial)){//tiene numeros o carácteres especiales
+        if(1 === preg_match('~[^a-zA-Z\s.]~', $razonsocial)){//tiene numeros o carácteres especiales
             $errores['razonsocial'] = "La razon social no puede contener caracteres no válidos";
             $valido = false;
         }

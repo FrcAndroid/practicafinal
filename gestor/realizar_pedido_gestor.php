@@ -17,7 +17,7 @@ $resultado->execute();
 
     <h1>Generar pedidos</h1>
 <?php while($producto = $resultado->fetch(PDO::FETCH_ASSOC)){//hay productos que enseñar //generamos la estructura de un bloque de pedido
-        if($producto["ACTIVO"] == "SI"){?>
+        if($producto["ACTIVO"] == "s"){?>
     <div id="producto" style=" margin-right: 25px; margin-left: 50px; margin-top: 50px" class="col-md-2 float-left">
         <img src="<?=$producto['IMAGEN']?>" alt="img" style="width: 250px; height: 250px">
         <b><?=$producto['NOMBRE']?></b>

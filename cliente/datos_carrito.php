@@ -1,7 +1,7 @@
 <?php
 include "../base_datos.php";
 include "control_sesion_cliente.php";
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 //recibimos los datos del ajax
 if(isset($_POST['valores'])){
     $form = explode("&", $_POST['valores']);//post serializado

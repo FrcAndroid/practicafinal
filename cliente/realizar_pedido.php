@@ -3,7 +3,7 @@ include 'inicio_clientes.php';
 include '../base_datos.php';
 
 //primera pasada, leemos los productos desde base de datos
-define("USUARIO", "CLIENTES");
+define("USUARIO", "CLIENTE");
 $u=USUARIO;
 $conexion = conectar($u);
 $consulta = "SELECT * FROM articulos";
@@ -16,7 +16,7 @@ $resultado->execute();
 
 <h1>Generar pedidos</h1>
 <?php while($producto = $resultado->fetch(PDO::FETCH_ASSOC)){//hay productos que enseñar //generamos la estructura de un bloque de pedido
-    if($producto["ACTIVO"] == "SI"){?>
+    if($producto["ACTIVO"] == "s"){?>
 
     <div id="producto" style=" margin-right: 25px; margin-left: 50px; margin-top: 50px" class="col-md-2 float-left">
             <img src=<?=$producto['IMAGEN']?> alt="img" style="width: 250px; height: 250px">
